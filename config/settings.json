@@ -1,0 +1,27 @@
+{
+    "application": {
+        "name": "MRGpt",
+        "version": "0.1.0"
+    },
+    "window": {
+        "width": 1500,
+        "height": 900,
+        "maximized": false
+    },
+    "browser": {
+        "home_page": "https://www.google.com",
+        "search_engine": "https://www.google.com/search?q={}",
+        "default_zoom": 1.0
+    },
+    "network": {
+        "active_profile": "",
+        "auto_connect": false
+    },
+    "download": {
+        "directory": "downloads"
+    },
+    "ui": {
+        "theme": "light",
+        "language": "fa"
+    }
+}

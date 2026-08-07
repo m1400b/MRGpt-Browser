@@ -1,0 +1,44 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+
+# Logs
+logs/
+*.log
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Qt WebEngine cache/profile
+cache/
+profiles/
+webengine/
+qtwebengine/
+storage/
+sessions/
+
+# Browser user data
+userdata/
+downloads/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Environment files
+.env
+.env.*
+
+# OS files
+Thumbs.db
+.DS_Store

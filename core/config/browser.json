@@ -1,0 +1,9 @@
+{
+    "home_page": "https://www.google.com",
+    "search_engine": "https://www.google.com/search?q={query}",
+    "download_path": "downloads",
+    "theme": "light",
+    "javascript_enabled": true,
+    "save_session": true,
+    "user_agent": "MRGptBrowser/1.0"
+}

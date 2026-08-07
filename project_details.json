@@ -1,0 +1,1519 @@
+{
+    "create_project.py": {
+        "lines": 198,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": [
+            "json",
+            "pathlib"
+        ]
+    },
+    "main.py": {
+        "lines": 23,
+        "classes": [],
+        "functions": [
+            "main"
+        ],
+        "methods": {},
+        "imports": [
+            "core.application",
+            "sys"
+        ]
+    },
+    "project_DIR.py": {
+        "lines": 164,
+        "classes": [],
+        "functions": [
+            "analyze_python",
+            "build_tree"
+        ],
+        "methods": {},
+        "imports": [
+            "ast",
+            "json",
+            "pathlib"
+        ]
+    },
+    "controllers\\addressbar_controller.py": {
+        "lines": 97,
+        "classes": [
+            "AddressBarController"
+        ],
+        "functions": [],
+        "methods": {
+            "AddressBarController": [
+                "__init__",
+                "_connect",
+                "_tab_changed",
+                "_navigate"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "__future__"
+        ]
+    },
+    "core\\application.py": {
+        "lines": 93,
+        "classes": [
+            "Application"
+        ],
+        "functions": [],
+        "methods": {
+            "Application": [
+                "__init__",
+                "_register_services",
+                "run"
+            ]
+        },
+        "imports": [
+            "PySide6.QtWidgets",
+            "__future__",
+            "core.profile.private_profile",
+            "services.browser_service",
+            "services.connection_service",
+            "services.profile_service",
+            "services.service_container",
+            "sys",
+            "ui.windows.main_window"
+        ]
+    },
+    "core\\__init__.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "database\\database_manager.py": {
+        "lines": 155,
+        "classes": [
+            "DatabaseManager"
+        ],
+        "functions": [],
+        "methods": {
+            "DatabaseManager": [
+                "__init__",
+                "connect",
+                "_configure",
+                "cursor",
+                "commit",
+                "rollback",
+                "close",
+                "execute",
+                "executemany"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "pathlib",
+            "sqlite3"
+        ]
+    },
+    "database\\migrations.py": {
+        "lines": 291,
+        "classes": [
+            "MigrationManager"
+        ],
+        "functions": [],
+        "methods": {
+            "MigrationManager": [
+                "__init__",
+                "migrate",
+                "_create_history_table",
+                "_create_bookmark_table",
+                "_create_download_table",
+                "_create_settings_table",
+                "_create_ai_session_table",
+                "_create_ai_message_table",
+                "_create_vpn_table"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "sqlite3"
+        ]
+    },
+    "database\\model_mapper.py": {
+        "lines": 164,
+        "classes": [
+            "ModelMapper"
+        ],
+        "functions": [],
+        "methods": {
+            "ModelMapper": [
+                "to_record",
+                "from_record",
+                "update_model",
+                "copy"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "dataclasses",
+            "sqlite3"
+        ]
+    },
+    "managers\\history_manager.py": {
+        "lines": 202,
+        "classes": [
+            "HistoryManager"
+        ],
+        "functions": [],
+        "methods": {
+            "HistoryManager": [
+                "__init__",
+                "add_visit",
+                "remove",
+                "clear",
+                "all",
+                "search",
+                "recent",
+                "count",
+                "delete_by_url"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "database.repository.history_repository",
+            "datetime",
+            "models.history_item"
+        ]
+    },
+    "models\\ai_message.py": {
+        "lines": 173,
+        "classes": [
+            "AIMessage"
+        ],
+        "functions": [],
+        "methods": {
+            "AIMessage": [
+                "is_user",
+                "is_assistant",
+                "has_images",
+                "has_files",
+                "add_image",
+                "add_file",
+                "add_tokens",
+                "__str__"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "dataclasses",
+            "datetime",
+            "models.entity_model"
+        ]
+    },
+    "models\\ai_session.py": {
+        "lines": 157,
+        "classes": [
+            "AISession"
+        ],
+        "functions": [],
+        "methods": {
+            "AISession": [
+                "is_empty",
+                "add_message",
+                "add_tokens",
+                "add_tag",
+                "remove_tag",
+                "clear_tags",
+                "__str__"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "dataclasses",
+            "models.entity_model"
+        ]
+    },
+    "models\\base_model.py": {
+        "lines": 284,
+        "classes": [
+            "BaseModel"
+        ],
+        "functions": [],
+        "methods": {
+            "BaseModel": [
+                "to_dict",
+                "from_dict",
+                "to_json",
+                "from_json",
+                "copy",
+                "update",
+                "field_names",
+                "keys",
+                "values",
+                "items",
+                "__getitem__",
+                "__setitem__",
+                "__contains__",
+                "__iter__",
+                "__len__",
+                "__eq__",
+                "__repr__"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "dataclasses",
+            "json"
+        ]
+    },
+    "models\\bookmark_item.py": {
+        "lines": 116,
+        "classes": [
+            "BookmarkItem"
+        ],
+        "functions": [],
+        "methods": {
+            "BookmarkItem": [
+                "domain",
+                "is_empty",
+                "add_tag",
+                "remove_tag",
+                "clear_tags",
+                "increase_visit",
+                "__str__"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "dataclasses",
+            "models.entity_model"
+        ]
+    },
+    "models\\browser_settings.py": {
+        "lines": 167,
+        "classes": [
+            "BrowserSettings"
+        ],
+        "functions": [],
+        "methods": {
+            "BrowserSettings": [
+                "reset"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "dataclasses",
+            "models.settings_model"
+        ]
+    },
+    "models\\download_item.py": {
+        "lines": 198,
+        "classes": [
+            "DownloadItem"
+        ],
+        "functions": [],
+        "methods": {
+            "DownloadItem": [
+                "full_path",
+                "is_active",
+                "update_progress",
+                "finish",
+                "cancel",
+                "interrupt",
+                "pause",
+                "resume",
+                "__str__"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "dataclasses",
+            "datetime",
+            "models.entity_model",
+            "pathlib"
+        ]
+    },
+    "models\\entity_model.py": {
+        "lines": 74,
+        "classes": [
+            "EntityModel"
+        ],
+        "functions": [],
+        "methods": {
+            "EntityModel": [
+                "touch",
+                "delete",
+                "restore",
+                "is_new"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "dataclasses",
+            "datetime",
+            "models.base_model",
+            "uuid"
+        ]
+    },
+    "models\\history_item.py": {
+        "lines": 65,
+        "classes": [
+            "HistoryItem"
+        ],
+        "functions": [],
+        "methods": {
+            "HistoryItem": [
+                "domain",
+                "increase_visit",
+                "is_empty",
+                "__str__"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "dataclasses",
+            "datetime",
+            "models.base_model"
+        ]
+    },
+    "models\\settings_model.py": {
+        "lines": 47,
+        "classes": [
+            "SettingsModel"
+        ],
+        "functions": [],
+        "methods": {
+            "SettingsModel": [
+                "touch",
+                "reset"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "dataclasses",
+            "datetime",
+            "models.base_model"
+        ]
+    },
+    "models\\vpn_config.py": {
+        "lines": 158,
+        "classes": [
+            "VPNConfig"
+        ],
+        "functions": [],
+        "methods": {
+            "VPNConfig": [
+                "address",
+                "is_valid",
+                "increase_connection",
+                "reset_statistics",
+                "__str__"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "dataclasses",
+            "models.entity_model"
+        ]
+    },
+    "models\\__init__.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "services\\browser_service.py": {
+        "lines": 212,
+        "classes": [
+            "BrowserService"
+        ],
+        "functions": [],
+        "methods": {
+            "BrowserService": [
+                "__init__",
+                "add_tab",
+                "remove_tab",
+                "set_current_tab",
+                "current_tab",
+                "current_url",
+                "current_title",
+                "tabs",
+                "count",
+                "clear",
+                "back",
+                "forward",
+                "reload",
+                "stop",
+                "zoom_in",
+                "zoom_out",
+                "reset_zoom",
+                "load",
+                "_connect_tab"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "__future__",
+            "core.browser.browser_tab",
+            "typing"
+        ]
+    },
+    "services\\connection_service.py": {
+        "lines": 188,
+        "classes": [
+            "ConnectionService"
+        ],
+        "functions": [],
+        "methods": {
+            "ConnectionService": [
+                "__init__",
+                "reload",
+                "profiles",
+                "names",
+                "exists",
+                "path",
+                "active",
+                "active_path",
+                "set_active",
+                "clear_active",
+                "count"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "__future__",
+            "core.config.config_manager",
+            "pathlib",
+            "typing"
+        ]
+    },
+    "services\\profile_service.py": {
+        "lines": 165,
+        "classes": [
+            "ProfileService"
+        ],
+        "functions": [],
+        "methods": {
+            "ProfileService": [
+                "__init__",
+                "register",
+                "unregister",
+                "set_current",
+                "current",
+                "get",
+                "exists",
+                "names",
+                "profiles",
+                "count",
+                "clear",
+                "current_name"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "__future__",
+            "core.profile.browser_profile",
+            "typing"
+        ]
+    },
+    "services\\service_container.py": {
+        "lines": 129,
+        "classes": [
+            "ServiceContainer"
+        ],
+        "functions": [],
+        "methods": {
+            "ServiceContainer": [
+                "__init__",
+                "register",
+                "replace",
+                "resolve",
+                "exists",
+                "unregister",
+                "clear",
+                "services",
+                "__contains__",
+                "__getitem__",
+                "__setitem__"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "typing"
+        ]
+    },
+    "services\\__init__.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "ui\\__init__.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "ui\\sidebar\\sidebar.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "ui\\statusbar\\statusbar.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "ui\\toolbar\\toolbar.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "ui\\widgets\\tab_widget.py": {
+        "lines": 321,
+        "classes": [
+            "TabWidget"
+        ],
+        "functions": [],
+        "methods": {
+            "TabWidget": [
+                "__init__",
+                "create_tab",
+                "_connect_tab",
+                "close_tab",
+                "duplicate_current_tab",
+                "current_tab",
+                "current_view",
+                "current_page",
+                "current_profile",
+                "_current_changed",
+                "next_tab",
+                "previous_tab",
+                "close_current_tab",
+                "reload_current_tab",
+                "stop_loading",
+                "back",
+                "forward",
+                "zoom_in",
+                "zoom_out",
+                "reset_zoom"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "PySide6.QtWidgets",
+            "__future__",
+            "core.browser.browser_tab",
+            "typing"
+        ]
+    },
+    "ui\\windows\\main_window.py": {
+        "lines": 294,
+        "classes": [
+            "MainWindow"
+        ],
+        "functions": [],
+        "methods": {
+            "MainWindow": [
+                "__init__",
+                "_create_services",
+                "_create_browser",
+                "_build_ui",
+                "_create_statusbar",
+                "_connect_signals",
+                "_connect_current_tab",
+                "_go_home",
+                "_update_navigation_state",
+                "_load_progress",
+                "_load_finished",
+                "keyPressEvent"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "PySide6.QtGui",
+            "PySide6.QtWidgets",
+            "__future__",
+            "core.browser.browser",
+            "core.profile.browser_profile",
+            "services.browser_service",
+            "services.profile_service",
+            "ui.widgets.browser.browser_toolbar",
+            "ui.widgets.browser.page_loading_bar"
+        ]
+    },
+    "ui\\widgets\\browser\\address_bar.py": {
+        "lines": 167,
+        "classes": [
+            "AddressBar"
+        ],
+        "functions": [],
+        "methods": {
+            "AddressBar": [
+                "__init__",
+                "_configure",
+                "_connect_signals",
+                "_return_pressed",
+                "set_url",
+                "url",
+                "clear_url",
+                "select_all",
+                "focusInEvent",
+                "keyPressEvent"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "PySide6.QtWidgets",
+            "__future__"
+        ]
+    },
+    "ui\\widgets\\browser\\browser_toolbar.py": {
+        "lines": 244,
+        "classes": [
+            "BrowserToolbar"
+        ],
+        "functions": [],
+        "methods": {
+            "BrowserToolbar": [
+                "__init__",
+                "_create_button",
+                "_create_widgets",
+                "_build_ui",
+                "_connect_signals",
+                "set_url",
+                "url",
+                "clear_url",
+                "focus_address_bar",
+                "select_address",
+                "set_loading",
+                "set_navigation_state"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "PySide6.QtWidgets",
+            "__future__",
+            "ui.widgets.browser.address_bar"
+        ]
+    },
+    "ui\\widgets\\browser\\page_loading_bar.py": {
+        "lines": 134,
+        "classes": [
+            "LoadingBar"
+        ],
+        "functions": [],
+        "methods": {
+            "LoadingBar": [
+                "__init__",
+                "getProgress",
+                "setProgress",
+                "start",
+                "finish",
+                "set_value",
+                "paintEvent"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "PySide6.QtWidgets",
+            "__future__"
+        ]
+    },
+    "database\\repository\\base_repository.py": {
+        "lines": 150,
+        "classes": [
+            "BaseRepository"
+        ],
+        "functions": [],
+        "methods": {
+            "BaseRepository": [
+                "add",
+                "update",
+                "delete",
+                "get",
+                "all",
+                "count",
+                "exists",
+                "clear",
+                "add_many",
+                "delete_many",
+                "is_empty"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "abc",
+            "typing"
+        ]
+    },
+    "database\\repository\\bookmark_repository.py": {
+        "lines": 299,
+        "classes": [
+            "BookmarkRepository"
+        ],
+        "functions": [],
+        "methods": {
+            "BookmarkRepository": [
+                "table",
+                "to_record",
+                "from_record",
+                "add",
+                "update",
+                "find_by_url",
+                "search",
+                "favorites",
+                "find_by_folder",
+                "rename_folder",
+                "delete_folder",
+                "exists_url"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "database.model_mapper",
+            "database.sqlite.sqlite_repository",
+            "datetime",
+            "models.bookmark_item"
+        ]
+    },
+    "database\\repository\\download_repository.py": {
+        "lines": 355,
+        "classes": [
+            "DownloadRepository"
+        ],
+        "functions": [],
+        "methods": {
+            "DownloadRepository": [
+                "table",
+                "to_record",
+                "from_record",
+                "add",
+                "update",
+                "find_by_url",
+                "active_downloads",
+                "completed_downloads",
+                "failed_downloads",
+                "clear_completed",
+                "clear_failed",
+                "delete_by_path",
+                "exists_path",
+                "total_download_size",
+                "update_progress"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "database.model_mapper",
+            "database.sqlite.sqlite_repository",
+            "datetime",
+            "models.download_item"
+        ]
+    },
+    "database\\repository\\history_repository.py": {
+        "lines": 304,
+        "classes": [
+            "HistoryRepository"
+        ],
+        "functions": [],
+        "methods": {
+            "HistoryRepository": [
+                "table",
+                "to_record",
+                "from_record",
+                "add",
+                "update",
+                "find_by_url",
+                "search",
+                "last_visited",
+                "delete_by_url"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "database.sqlite.sqlite_repository",
+            "datetime",
+            "models.history_item"
+        ]
+    },
+    "database\\sqlite\\sqlite_repository.py": {
+        "lines": 260,
+        "classes": [
+            "SQLiteRepository"
+        ],
+        "functions": [],
+        "methods": {
+            "SQLiteRepository": [
+                "__init__",
+                "table",
+                "to_record",
+                "from_record",
+                "execute",
+                "executemany",
+                "get",
+                "all",
+                "exists",
+                "count",
+                "clear",
+                "delete"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "abc",
+            "database.repository.base_repository",
+            "sqlite3"
+        ]
+    },
+    "core\\browser\\bookmark_service.py": {
+        "lines": 325,
+        "classes": [
+            "BookmarkService"
+        ],
+        "functions": [],
+        "methods": {
+            "BookmarkService": [
+                "__init__",
+                "_connect",
+                "_create_database",
+                "add",
+                "remove",
+                "exists",
+                "get_all",
+                "search",
+                "clear"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "datetime",
+            "pathlib",
+            "sqlite3"
+        ]
+    },
+    "core\\browser\\browser.py": {
+        "lines": 364,
+        "classes": [
+            "Browser"
+        ],
+        "functions": [],
+        "methods": {
+            "Browser": [
+                "__init__",
+                "_build_ui",
+                "_connect",
+                "_disconnect_current_tab",
+                "_connect_current_tab",
+                "_current_tab_changed",
+                "navigate",
+                "load_url",
+                "new_tab",
+                "close_current_tab",
+                "duplicate_tab",
+                "reload",
+                "stop",
+                "back",
+                "forward",
+                "zoom_in",
+                "zoom_out",
+                "reset_zoom",
+                "current_url",
+                "current_title",
+                "can_go_back",
+                "can_go_forward",
+                "is_loading",
+                "current_tab",
+                "current_view",
+                "current_page",
+                "current_profile"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "PySide6.QtWidgets",
+            "__future__",
+            "services.browser_service",
+            "services.profile_service",
+            "ui.widgets.tab_widget"
+        ]
+    },
+    "core\\browser\\browser_controller.py": {
+        "lines": 172,
+        "classes": [
+            "BrowserController"
+        ],
+        "functions": [],
+        "methods": {
+            "BrowserController": [
+                "__init__",
+                "navigate",
+                "prepare_url",
+                "new_tab",
+                "close_current_tab",
+                "duplicate_current_tab",
+                "reload",
+                "stop",
+                "back",
+                "forward",
+                "zoom_in",
+                "zoom_out",
+                "reset_zoom"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "__future__",
+            "ui.widgets.tab_widget"
+        ]
+    },
+    "core\\browser\\browser_page.py": {
+        "lines": 173,
+        "classes": [
+            "BrowserPage"
+        ],
+        "functions": [],
+        "methods": {
+            "BrowserPage": [
+                "__init__",
+                "createWindow",
+                "certificateError",
+                "javaScriptConsoleMessage",
+                "featurePermissionRequested",
+                "chooseFiles",
+                "trigger_download",
+                "create_new_tab",
+                "open_url",
+                "current_url",
+                "profile_object"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "PySide6.QtWebEngineCore",
+            "__future__"
+        ]
+    },
+    "core\\browser\\browser_tab.py": {
+        "lines": 214,
+        "classes": [
+            "BrowserTab"
+        ],
+        "functions": [],
+        "methods": {
+            "BrowserTab": [
+                "__init__",
+                "_build_ui",
+                "_connect_signals",
+                "load",
+                "reload",
+                "back",
+                "forward",
+                "stop",
+                "url",
+                "title",
+                "zoom_in",
+                "zoom_out",
+                "reset_zoom",
+                "view",
+                "page",
+                "profile",
+                "is_loading",
+                "zoom_factor"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "PySide6.QtWidgets",
+            "__future__",
+            "core.browser.browser_view"
+        ]
+    },
+    "core\\browser\\browser_view.py": {
+        "lines": 257,
+        "classes": [
+            "BrowserView"
+        ],
+        "functions": [],
+        "methods": {
+            "BrowserView": [
+                "__init__",
+                "_connect_signals",
+                "open_url",
+                "current_url",
+                "current_title",
+                "zoom_in",
+                "zoom_out",
+                "reset_zoom",
+                "contextMenuEvent",
+                "wheelEvent",
+                "back",
+                "forward",
+                "reload",
+                "stop"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "PySide6.QtGui",
+            "PySide6.QtWebEngineWidgets",
+            "PySide6.QtWidgets",
+            "__future__",
+            "core.browser.browser_page"
+        ]
+    },
+    "core\\browser\\browser_window.py": {
+        "lines": 916,
+        "classes": [
+            "BrowserWindow"
+        ],
+        "functions": [],
+        "methods": {
+            "BrowserWindow": [
+                "__init__",
+                "_build_ui",
+                "_build_toolbar",
+                "_build_tabs",
+                "_connect_signals",
+                "current_tab",
+                "go_back",
+                "go_forward",
+                "reload_page",
+                "go_home",
+                "navigate",
+                "current_tab_changed",
+                "update_tab_title",
+                "update_url",
+                "download_requested",
+                "_create_shortcuts",
+                "new_tab",
+                "close_current_tab",
+                "focus_address",
+                "closeEvent",
+                "open_url",
+                "set_home_page",
+                "get_download_manager",
+                "_download_started",
+                "_download_finished",
+                "_download_failed"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "PySide6.QtGui",
+            "PySide6.QtWidgets",
+            "__future__",
+            "core.browser.browser_profile",
+            "core.browser.downloads_panel",
+            "core.browser.tab_manager",
+            "core.config.browser_config"
+        ]
+    },
+    "core\\browser\\downloads_panel.py": {
+        "lines": 565,
+        "classes": [
+            "DownloadsPanel"
+        ],
+        "functions": [],
+        "methods": {
+            "DownloadsPanel": [
+                "__init__",
+                "_build_ui",
+                "_connect_signals",
+                "load_history",
+                "add_download",
+                "update_download",
+                "remove_download",
+                "clear_finished",
+                "_update_empty_state",
+                "update_title",
+                "refresh",
+                "showEvent",
+                "manager_instance"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "PySide6.QtWidgets",
+            "__future__",
+            "core.browser.download_item_widget",
+            "core.browser.download_manager"
+        ]
+    },
+    "core\\browser\\download_item_widget.py": {
+        "lines": 577,
+        "classes": [
+            "DownloadItemWidget"
+        ],
+        "functions": [],
+        "methods": {
+            "DownloadItemWidget": [
+                "__init__",
+                "_build_ui",
+                "_connect_signals",
+                "update_item",
+                "_update_buttons",
+                "refresh",
+                "_update_state_style",
+                "_update_icon",
+                "set_item",
+                "sizeHint",
+                "minimumSizeHint"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "PySide6.QtGui",
+            "PySide6.QtWidgets",
+            "__future__",
+            "core.browser.download_manager",
+            "pathlib"
+        ]
+    },
+    "core\\browser\\history_service.py": {
+        "lines": 225,
+        "classes": [
+            "HistoryService"
+        ],
+        "functions": [],
+        "methods": {
+            "HistoryService": [
+                "__init__",
+                "_connect",
+                "_create_database",
+                "add_visit",
+                "get_all",
+                "search",
+                "clear"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "datetime",
+            "pathlib",
+            "sqlite3"
+        ]
+    },
+    "core\\browser\\tab_manager.py": {
+        "lines": 491,
+        "classes": [
+            "TabManager"
+        ],
+        "functions": [],
+        "methods": {
+            "TabManager": [
+                "__init__",
+                "_connect_widget",
+                "create_tab",
+                "_connect_tab",
+                "_tab_index",
+                "_update_title",
+                "_update_url",
+                "close_tab",
+                "current_tab",
+                "current_index",
+                "count",
+                "close_current_tab",
+                "next_tab",
+                "previous_tab",
+                "current",
+                "current_view",
+                "current_page",
+                "current_url",
+                "tab",
+                "duplicate_tab",
+                "reopen_last_closed",
+                "pin_tab",
+                "move_tab"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "PySide6.QtWidgets",
+            "__future__",
+            "core.browser.browser_tab"
+        ]
+    },
+    "core\\browser\\__init__.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "core\\config\\browser_config.py": {
+        "lines": 185,
+        "classes": [
+            "BrowserConfig"
+        ],
+        "functions": [],
+        "methods": {
+            "BrowserConfig": [
+                "__init__",
+                "load",
+                "save",
+                "get",
+                "set",
+                "reset"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "json",
+            "pathlib"
+        ]
+    },
+    "core\\config\\config_manager.py": {
+        "lines": 260,
+        "classes": [
+            "ConfigManager"
+        ],
+        "functions": [],
+        "methods": {
+            "ConfigManager": [
+                "__init__",
+                "load",
+                "save",
+                "_create_default",
+                "get",
+                "set",
+                "remove",
+                "section",
+                "contains",
+                "data",
+                "file"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "json",
+            "pathlib",
+            "typing"
+        ]
+    },
+    "core\\database\\database.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "core\\database\\__init__.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "core\\download\\download_manager.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "core\\download\\__init__.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "core\\events\\event.py": {
+        "lines": 173,
+        "classes": [
+            "Event"
+        ],
+        "functions": [],
+        "methods": {
+            "Event": [
+                "get",
+                "set",
+                "cancel",
+                "mark_handled",
+                "is_cancelled",
+                "is_handled",
+                "__getitem__",
+                "__setitem__",
+                "__contains__",
+                "__repr__"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "dataclasses",
+            "datetime",
+            "typing",
+            "uuid"
+        ]
+    },
+    "core\\events\\event_bus.py": {
+        "lines": 243,
+        "classes": [
+            "EventBus"
+        ],
+        "functions": [],
+        "methods": {
+            "EventBus": [
+                "__new__",
+                "__init__",
+                "subscribe",
+                "unsubscribe",
+                "publish",
+                "clear",
+                "listener_count",
+                "has_listener",
+                "events"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "collections",
+            "core.events.event",
+            "threading",
+            "typing"
+        ]
+    },
+    "core\\events\\event_types.py": {
+        "lines": 182,
+        "classes": [
+            "EventType"
+        ],
+        "functions": [],
+        "methods": {
+            "EventType": []
+        },
+        "imports": [
+            "__future__",
+            "enum"
+        ]
+    },
+    "core\\logger\\logger_manager.py": {
+        "lines": 199,
+        "classes": [
+            "LoggerManager"
+        ],
+        "functions": [],
+        "methods": {
+            "LoggerManager": [
+                "__new__",
+                "__init__",
+                "get_logger",
+                "browser",
+                "network",
+                "javascript",
+                "ssl",
+                "vpn",
+                "download",
+                "history",
+                "bookmark",
+                "performance",
+                "ai"
+            ]
+        },
+        "imports": [
+            "__future__",
+            "logging",
+            "logging.handlers",
+            "pathlib"
+        ]
+    },
+    "core\\network\\connection_manager.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "core\\network\\proxy_manager.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "core\\network\\__init__.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "core\\profile\\browser_profile.py": {
+        "lines": 76,
+        "classes": [
+            "BrowserProfile"
+        ],
+        "functions": [],
+        "methods": {
+            "BrowserProfile": [
+                "__init__",
+                "_configure",
+                "qt_profile",
+                "name",
+                "clear"
+            ]
+        },
+        "imports": [
+            "PySide6.QtCore",
+            "PySide6.QtWebEngineCore",
+            "__future__"
+        ]
+    },
+    "core\\profile\\private_profile.py": {
+        "lines": 32,
+        "classes": [
+            "PrivateProfile"
+        ],
+        "functions": [],
+        "methods": {
+            "PrivateProfile": [
+                "__init__"
+            ]
+        },
+        "imports": [
+            "PySide6.QtWebEngineCore",
+            "__future__",
+            "core.profile.browser_profile"
+        ]
+    },
+    "core\\profile\\profile_manager.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "core\\profile\\__init__.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "core\\security\\__init__.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "core\\utils\\constants.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    },
+    "core\\utils\\__init__.py": {
+        "lines": 0,
+        "classes": [],
+        "functions": [],
+        "methods": {},
+        "imports": []
+    }
+}

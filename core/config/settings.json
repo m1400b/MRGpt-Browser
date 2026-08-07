@@ -1,0 +1,10 @@
+{
+    "language": "fa",
+    "theme": "dark",
+    "default_font": "Vazirmatn",
+    "download_directory": "downloads",
+    "private_mode": true,
+    "auto_restore_session": false,
+    "home_page": "https://www.google.com",
+    "connection_profile": null
+}

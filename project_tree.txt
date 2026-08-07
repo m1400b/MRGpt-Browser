@@ -1,0 +1,119 @@
+MRGPT
+├── assets
+│   ├── fonts
+│   ├── icons
+│   ├── images
+│   ├── themes
+│   └── translations
+├── cache
+├── config
+│   └── settings.json
+├── connections
+├── controllers
+│   └── addressbar_controller.py
+├── core
+│   ├── browser
+│   │   ├── __init__.py
+│   │   ├── bookmark_service.py
+│   │   ├── browser.py
+│   │   ├── browser_controller.py
+│   │   ├── browser_page.py
+│   │   ├── browser_tab.py
+│   │   ├── browser_view.py
+│   │   ├── browser_window.py
+│   │   ├── download_item_widget.py
+│   │   ├── downloads_panel.py
+│   │   ├── history_service.py
+│   │   └── tab_manager.py
+│   ├── config
+│   │   ├── browser.json
+│   │   ├── browser_config.py
+│   │   ├── config_manager.py
+│   │   ├── network.json
+│   │   └── settings.json
+│   ├── database
+│   │   ├── __init__.py
+│   │   └── database.py
+│   ├── download
+│   │   ├── __init__.py
+│   │   └── download_manager.py
+│   ├── events
+│   │   ├── event.py
+│   │   ├── event_bus.py
+│   │   └── event_types.py
+│   ├── logger
+│   │   └── logger_manager.py
+│   ├── network
+│   │   ├── __init__.py
+│   │   ├── connection_manager.py
+│   │   └── proxy_manager.py
+│   ├── profile
+│   │   ├── __init__.py
+│   │   ├── browser_profile.py
+│   │   ├── private_profile.py
+│   │   └── profile_manager.py
+│   ├── security
+│   │   └── __init__.py
+│   ├── utils
+│   │   ├── __init__.py
+│   │   └── constants.py
+│   ├── __init__.py
+│   └── application.py
+├── database
+│   ├── repository
+│   │   ├── base_repository.py
+│   │   ├── bookmark_repository.py
+│   │   ├── download_repository.py
+│   │   └── history_repository.py
+│   ├── sqlite
+│   │   └── sqlite_repository.py
+│   ├── database_manager.py
+│   ├── migrations.py
+│   └── model_mapper.py
+├── docs
+├── downloads
+├── logs
+├── managers
+│   └── history_manager.py
+├── models
+│   ├── __init__.py
+│   ├── ai_message.py
+│   ├── ai_session.py
+│   ├── base_model.py
+│   ├── bookmark_item.py
+│   ├── browser_settings.py
+│   ├── download_item.py
+│   ├── entity_model.py
+│   ├── history_item.py
+│   ├── settings_model.py
+│   └── vpn_config.py
+├── plugins
+├── profiles
+├── services
+│   ├── __init__.py
+│   ├── browser_service.py
+│   ├── connection_service.py
+│   ├── profile_service.py
+│   └── service_container.py
+├── temp
+├── tests
+├── ui
+│   ├── dialogs
+│   ├── sidebar
+│   │   └── sidebar.py
+│   ├── statusbar
+│   │   └── statusbar.py
+│   ├── toolbar
+│   │   └── toolbar.py
+│   ├── widgets
+│   │   ├── browser
+│   │   │   ├── address_bar.py
+│   │   │   ├── browser_toolbar.py
+│   │   │   └── page_loading_bar.py
+│   │   └── tab_widget.py
+│   ├── windows
+│   │   └── main_window.py
+│   └── __init__.py
+├── create_project.py
+├── main.py
+└── project_DIR.py
