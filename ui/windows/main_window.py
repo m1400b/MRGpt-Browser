@@ -23,7 +23,8 @@ from core.browser.browser import Browser
 
 from ui.widgets.browser.browser_toolbar import BrowserToolbar
 from ui.widgets.browser.page_loading_bar import LoadingBar
-
+from services.service_container import ServiceContainer
+from services.service_names import ServiceNames
 
 class MainWindow(QMainWindow):
     """
@@ -39,24 +40,27 @@ class MainWindow(QMainWindow):
     # -------------------------------------------------
 
     def __init__(
-        self,
-        services: ServiceContainer,
-    ) -> None:
+    self,
+    services: ServiceContainer,
+) -> None:
 
         super().__init__()
 
         self.services = services
 
-        self.setWindowTitle(
-            "MRGpt Browser"
+        self.settings_service = self.services.resolve(
+            ServiceNames.SETTINGS
         )
 
-        self.resize(
-            1500,
-            900,
+        self.appearance_service = self.services.resolve(
+            ServiceNames.APPEARANCE
         )
 
-        self._create_widgets()
+        self.setWindowTitle("MRGpt Browser")
+
+        self.resize(1500, 900)
+
+        self._create_browser()
 
         self._build_ui()
 
@@ -64,11 +68,11 @@ class MainWindow(QMainWindow):
 
         self._connect_signals()
 
+        self.appearance_service.apply()
+
         self.browser.new_tab(
-            QUrl(
-                "https://www.google.com"
-            )
-        )
+        QUrl("https://www.google.com")
+    )
 
     # -------------------------------------------------
     # Widgets
@@ -292,3 +296,24 @@ class MainWindow(QMainWindow):
         super().keyPressEvent(
             event
         )
+        
+   
+   
+    def _create_browser(self) -> None:
+        """
+        Create the browser facade.
+
+        Browser resolves its required services
+        from the application service container.
+        """
+
+        self.browser = Browser(
+            self.services
+        )
+
+        self.toolbar = BrowserToolbar()
+
+        self.loading_bar = LoadingBar()
+    
+
+

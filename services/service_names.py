@@ -23,6 +23,8 @@ class ServiceNames:
     PROFILE: Final[str] = "profile"
 
     BROWSER: Final[str] = "browser"
+    
+    APPEARANCE: Final[str] = "appearance"
 
     # -------------------------------------------------
     # Browser
