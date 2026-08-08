@@ -13,6 +13,7 @@ from services.network_service import NetworkService
 from services.service_container import ServiceContainer
 from services.service_names import ServiceNames
 
+from services.appearance_service import AppearanceService
 from services.settings_service import SettingsService
 from services.profile_service import ProfileService
 from services.browser_service import BrowserService
@@ -72,59 +73,76 @@ class Application:
 
     # -------------------------------------------------
 
+    
     def _register_services(self) -> None:
         """
         Create and register all application services.
         """
-
+    
         #
         # Settings
         #
-
+    
         settings_service = SettingsService()
-
+    
         self.services.register(
             ServiceNames.SETTINGS,
             settings_service,
         )
-
+    
         #
         # Profile
         #
-
+    
         profile_service = ProfileService()
-
+    
         profile_service.register(
             "Private",
             PrivateProfile(),
         )
-
+    
         self.services.register(
             ServiceNames.PROFILE,
             profile_service,
         )
-
+    
         #
-        # Connection
+        # Network
         #
-
+    
         network_service = NetworkService()
-
+    
         self.services.register(
             ServiceNames.NETWORK,
             network_service,
-)
-
+        )
+    
         #
         # Browser
         #
-
+    
         browser_service = BrowserService()
-
+    
         self.services.register(
             ServiceNames.BROWSER,
             browser_service,
         )
+    
+        #
+        # Appearance
+        #
+    
+        appearance_service = AppearanceService(
+            settings_service,
+            self.qt,
+        )
+    
+        self.services.register(
+            ServiceNames.APPEARANCE,
+            appearance_service,
+        )
+    
+    
 
     # -------------------------------------------------
 
