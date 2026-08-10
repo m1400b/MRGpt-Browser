@@ -6,20 +6,17 @@ Base Settings Page
 
 from __future__ import annotations
 
-from abc import ABC
-from abc import abstractmethod
-
 from PySide6.QtWidgets import QWidget
 
 from services.settings_service import SettingsService
 
 
-class BaseSettingsPage(QWidget, ABC):
+class BaseSettingsPage(QWidget):
     """
-    Base class for all settings pages.
+    Base class for settings pages.
 
-    تمام صفحات تنظیمات باید از این کلاس
-    ارث‌بری کنند.
+    All settings pages receive the shared
+    SettingsService instance.
     """
 
     # -------------------------------------------------
@@ -36,29 +33,49 @@ class BaseSettingsPage(QWidget, ABC):
 
     # -------------------------------------------------
 
-    @abstractmethod
-    def oad_settings(self) -> None:
+    def load(self) -> None:
         """
-        Load values from SettingsService
-        into UI controls.
-        """
+        Load settings into the page controls.
 
-        raise NotImplementedError
+        Subclasses should override this method.
+        """
+        pass
 
     # -------------------------------------------------
 
-    @abstractmethod
-    def apply_settings(self) -> None:
+    def apply(self) -> None:
         """
-        Save values from UI controls
-        into SettingsService.
-        """
+        Apply settings from the page controls.
 
-        raise NotImplementedError
-    
+        Subclasses should override this method.
+        """
+        pass
+
+    # -------------------------------------------------
+
     def validate(self) -> bool:
         """
-        Validate page values before saving.
+        Validate page settings.
+
+        Returns
+        -------
+        bool
+            True when settings are valid.
         """
-    
+
         return True
+
+    # -------------------------------------------------
+
+    def save_settings(self) -> None:
+        """
+        Validate and apply page settings.
+        """
+
+        if not self.validate():
+            return
+
+        self.apply()
+
+        self.settings.sync()
+

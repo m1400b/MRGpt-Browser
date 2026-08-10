@@ -1,3 +1,4 @@
+
 """
 MRGpt Browser
 
@@ -27,6 +28,7 @@ class BrowserToolbar(QWidget):
     # -------------------------------------------------
     # Signals
     # -------------------------------------------------
+
     new_tab_requested = Signal()
 
     back_requested = Signal()
@@ -40,6 +42,8 @@ class BrowserToolbar(QWidget):
     ai_requested = Signal()
 
     menu_requested = Signal()
+
+    settings_requested = Signal()
 
     navigate_requested = Signal(str)
 
@@ -58,7 +62,9 @@ class BrowserToolbar(QWidget):
 
         self._connect_signals()
 
-    # -------------------------------------------------
+    # =================================================
+    # Button Factory
+    # =================================================
 
     def _create_button(
         self,
@@ -70,15 +76,24 @@ class BrowserToolbar(QWidget):
 
         button.setToolTip(tooltip)
 
-        button.setFixedSize(34, 34)
+        button.setFixedSize(
+            34,
+            34,
+        )
 
-        button.setFocusPolicy(Qt.NoFocus)
+        button.setFocusPolicy(
+            Qt.NoFocus
+        )
 
-        button.setCursor(Qt.PointingHandCursor)
+        button.setCursor(
+            Qt.PointingHandCursor
+        )
 
         return button
 
-    # -------------------------------------------------
+    # =================================================
+    # Widgets
+    # =================================================
 
     def _create_widgets(self) -> None:
 
@@ -101,9 +116,11 @@ class BrowserToolbar(QWidget):
             "⌂",
             "Home",
         )
+
         self.new_tab_button = self._create_button(
-    "🗋",
-    "New Tab",)
+            "🗋",
+            "New Tab",
+        )
 
         self.address_bar = AddressBar()
 
@@ -112,48 +129,79 @@ class BrowserToolbar(QWidget):
             "AI Assistant",
         )
 
+        self.settings_button = self._create_button(
+            "⚙",
+            "Settings",
+        )
+
         self.menu_button = self._create_button(
             "☰",
             "Menu",
         )
 
-    # -------------------------------------------------
+    # =================================================
+    # UI
+    # =================================================
 
     def _build_ui(self) -> None:
 
         layout = QHBoxLayout(self)
 
-        layout.setContentsMargins(6, 6, 6, 6)
+        layout.setContentsMargins(
+            6,
+            6,
+            6,
+            6,
+        )
 
         layout.setSpacing(6)
 
-        layout.addWidget(self.back_button)
+        layout.addWidget(
+            self.back_button
+        )
 
-        layout.addWidget(self.forward_button)
+        layout.addWidget(
+            self.forward_button
+        )
 
-        layout.addWidget(self.reload_button)
+        layout.addWidget(
+            self.reload_button
+        )
 
-        layout.addWidget(self.home_button)
+        layout.addWidget(
+            self.home_button
+        )
 
         layout.addWidget(
             self.address_bar,
             1,
         )
+
         layout.addWidget(
-    self.new_tab_button
-)
+            self.new_tab_button
+        )
 
-        layout.addWidget(self.ai_button)
+        layout.addWidget(
+            self.ai_button
+        )
 
-        layout.addWidget(self.menu_button)
+        layout.addWidget(
+            self.settings_button
+        )
 
-    # -------------------------------------------------
+        layout.addWidget(
+            self.menu_button
+        )
+
+    # =================================================
+    # Signals
+    # =================================================
 
     def _connect_signals(self) -> None:
-        
+
         self.new_tab_button.clicked.connect(
-    self.new_tab_requested.emit
-)
+            self.new_tab_requested.emit
+        )
 
         self.back_button.clicked.connect(
             self.back_requested.emit
@@ -175,6 +223,10 @@ class BrowserToolbar(QWidget):
             self.ai_requested.emit
         )
 
+        self.settings_button.clicked.connect(
+            self.settings_requested.emit
+        )
+
         self.menu_button.clicked.connect(
             self.menu_requested.emit
         )
@@ -183,14 +235,18 @@ class BrowserToolbar(QWidget):
             self.navigate_requested.emit
         )
 
-    # -------------------------------------------------
+    # =================================================
+    # Address Bar
+    # =================================================
 
     def set_url(
         self,
         url: str | QUrl,
     ) -> None:
 
-        self.address_bar.set_url(url)
+        self.address_bar.set_url(
+            url
+        )
 
     # -------------------------------------------------
 
@@ -216,7 +272,9 @@ class BrowserToolbar(QWidget):
 
         self.address_bar.select_all()
 
-    # -------------------------------------------------
+    # =================================================
+    # Loading
+    # =================================================
 
     def set_loading(
         self,
@@ -227,7 +285,9 @@ class BrowserToolbar(QWidget):
             "✕" if loading else "⟳"
         )
 
-    # -------------------------------------------------
+    # =================================================
+    # Navigation
+    # =================================================
 
     def set_navigation_state(
         self,
@@ -242,3 +302,4 @@ class BrowserToolbar(QWidget):
         self.forward_button.setEnabled(
             can_go_forward
         )
+

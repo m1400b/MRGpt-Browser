@@ -16,7 +16,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-
+from ui.dialogs.settings_dialog import SettingsDialog
 from services.service_container import ServiceContainer
 
 from core.browser.browser import Browser
@@ -25,6 +25,8 @@ from ui.widgets.browser.browser_toolbar import BrowserToolbar
 from ui.widgets.browser.page_loading_bar import LoadingBar
 from services.service_container import ServiceContainer
 from services.service_names import ServiceNames
+
+
 
 class MainWindow(QMainWindow):
     """
@@ -42,38 +44,67 @@ class MainWindow(QMainWindow):
     def __init__(
     self,
     services: ServiceContainer,
+    parent: QWidget | None = None,
 ) -> None:
-
-        super().__init__()
-
+    
+        super().__init__(parent)
+    
+        # ---------------------------------------------
+        # Services
+        # ---------------------------------------------
+    
         self.services = services
-
-        self.settings_service = self.services.resolve(
+    
+        self.settings_service = services.resolve(
             ServiceNames.SETTINGS
         )
-
-        self.appearance_service = self.services.resolve(
+    
+        self.appearance_service = services.resolve(
             ServiceNames.APPEARANCE
         )
-
-        self.setWindowTitle("MRGpt Browser")
-
-        self.resize(1500, 900)
-
+    
+        self.profile_service = services.resolve(
+            ServiceNames.PROFILE
+        )
+    
+        self.browser_service = services.resolve(
+            ServiceNames.BROWSER
+        )
+    
+        # ---------------------------------------------
+        # Window
+        # ---------------------------------------------
+    
+        self.setWindowTitle(
+            "MRGpt Browser"
+        )
+    
+        self.resize(
+            1500,
+            900,
+        )
+    
+        # ---------------------------------------------
+        # UI
+        # ---------------------------------------------
+    
         self._create_browser()
-
+    
         self._build_ui()
-
+    
         self._create_statusbar()
-
+    
         self._connect_signals()
-
-        self.appearance_service.apply()
-
+    
+        # ---------------------------------------------
+        # Initial Page
+        # ---------------------------------------------
+    
         self.browser.new_tab(
-        QUrl("https://www.google.com")
-    )
-
+            QUrl(
+                self.settings_service.home_page
+            )
+        )
     # -------------------------------------------------
     # Widgets
     # -------------------------------------------------
@@ -187,6 +218,10 @@ class MainWindow(QMainWindow):
         self.toolbar.navigate_requested.connect(
             self.browser.navigate
         )
+        
+        self.toolbar.settings_requested.connect(
+    self._open_settings
+)
 
         #
         # Browser
@@ -314,6 +349,38 @@ class MainWindow(QMainWindow):
         self.toolbar = BrowserToolbar()
 
         self.loading_bar = LoadingBar()
+        
+    
+    def _open_settings(self) -> None:
+        """
+        Open the application settings dialog.
+        """
+        dialog = SettingsDialog(
+    self.settings_service,
+    self.appearance_service,
+    self,
+)
+
+        dialog.exec()
+        
+   
+    def _open_settings(self) -> None:
+        """
+        Open the application settings dialog.
+        """
+
+        dialog = SettingsDialog(
+            self.settings_service,
+            self.appearance_service,
+            self,
+        )
+
+        dialog.exec()
+
+
+    
+        
+
     
 
 

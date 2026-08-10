@@ -47,6 +47,10 @@ class Application:
         self.services = ServiceContainer()
 
         self._register_services()
+        
+        self.services.resolve(
+    ServiceNames.APPEARANCE
+).apply()
 
         self.window = MainWindow(
             self.services
