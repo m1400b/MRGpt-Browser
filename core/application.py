@@ -22,7 +22,7 @@ from services.network_service import NetworkService
 from core.profile.private_profile import PrivateProfile
 
 from ui.windows.main_window import MainWindow
-
+from services.download_manager import DownloadManager
 
 class Application:
     """
@@ -79,74 +79,96 @@ class Application:
 
     
     def _register_services(self) -> None:
-        """
-        Create and register all application services.
-        """
-    
-        #
-        # Settings
-        #
-    
+
+    # ---------------------------------------------
+    # Settings
+    # ---------------------------------------------
+
         settings_service = SettingsService()
-    
+
         self.services.register(
             ServiceNames.SETTINGS,
             settings_service,
         )
-    
-        #
+
+    # ---------------------------------------------
         # Profile
-        #
-    
+        # ---------------------------------------------
+
         profile_service = ProfileService()
-    
+
+        private_profile = PrivateProfile()
+
         profile_service.register(
             "Private",
-            PrivateProfile(),
+            private_profile,
         )
-    
+
         self.services.register(
             ServiceNames.PROFILE,
             profile_service,
         )
-    
-        #
+
+        # ---------------------------------------------
+        # Downloads
+        # ---------------------------------------------
+
+        download_manager = DownloadManager(
+            settings_service
+        )
+
+        self.services.register(
+            ServiceNames.DOWNLOADS,
+            download_manager,
+        )
+
+        # ---------------------------------------------
+        # Connect Profile → DownloadManager
+        # ---------------------------------------------
+
+        private_profile.download_requested.connect(
+            download_manager.handle_download
+        )
+
+        
+
+        # ---------------------------------------------
+        # Browser
+        # ---------------------------------------------
+
+        browser_service = BrowserService()
+
+        self.services.register(
+            ServiceNames.BROWSER,
+            browser_service
+        )    
+
+        # ---------------------------------------------
         # Network
-        #
-    
+        # ---------------------------------------------
+
         network_service = NetworkService()
-    
+
         self.services.register(
             ServiceNames.NETWORK,
             network_service,
         )
-    
-        #
-        # Browser
-        #
-    
-        browser_service = BrowserService()
-    
-        self.services.register(
-            ServiceNames.BROWSER,
-            browser_service,
-        )
-    
-        #
+
+        # ---------------------------------------------
         # Appearance
-        #
-    
+        # ---------------------------------------------
+
         appearance_service = AppearanceService(
             settings_service,
             self.qt,
         )
-    
+
         self.services.register(
             ServiceNames.APPEARANCE,
             appearance_service,
         )
-    
-    
+
+
 
     # -------------------------------------------------
 
@@ -160,17 +182,82 @@ class Application:
         return self.qt.exec()
 
     # -------------------------------------------------
-
     def shutdown(self) -> None:
         """
-        Shutdown application services.
+        Shutdown application safely.
+    
+        Browser resources are released before profiles.
         """
+    
+        print(
+            "🧹 APPLICATION SHUTDOWN STARTED"
+        )
+    
+        # ---------------------------------------------
+        # 1. Shutdown Browser
+        # ---------------------------------------------
+    
+        if self.window is not None:
+        
+            if (
+                hasattr(
+                    self.window,
+                    "browser",
+                )
+                and self.window.browser is not None
+            ):
+    
+                self.window.browser.shutdown()
+    
+                print(
+                    "✅ BROWSER RESOURCES RELEASED"
+                )
+    
+        # ---------------------------------------------
+        # 2. Process deferred WebEngine deletions
+        # ---------------------------------------------
+    
+        QApplication.processEvents()
+    
+        # ---------------------------------------------
+        # 3. Close Main Window
+        # ---------------------------------------------
+    
+        if self.window is not None:
+        
+            self.window.close()
+    
+            QApplication.processEvents()
+    
+            self.window.deleteLater()
+    
+            self.window = None
+    
+            QApplication.processEvents()
+    
+        # ---------------------------------------------
+        # 4. Shutdown Services
+        # ---------------------------------------------
+    
+        self.services.shutdown()
+    
+        print(
+            "✅ APPLICATION SHUTDOWN FINISHED"
+        )
+    
+    
+    def _debug_download(self, request):
 
-        if hasattr(
-            self.services,
-            "shutdown",
-        ):
-            self.services.shutdown()
+        print(
+            "🔥🔥🔥 APPLICATION PROFILE DOWNLOAD:"
+        )
 
-        else:
-            self.services.clear()
+        print(
+            "URL:",
+            request.url().toString()
+        )
+
+        print(
+            "FILE:",
+            request.downloadFileName()
+        )

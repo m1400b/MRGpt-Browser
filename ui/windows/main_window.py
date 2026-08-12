@@ -6,6 +6,7 @@ Main Window
 
 from __future__ import annotations
 
+from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import (
@@ -16,16 +17,15 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from ui.dialogs.settings_dialog import SettingsDialog
-from services.service_container import ServiceContainer
-
-from core.browser.browser import Browser
-
-from ui.widgets.browser.browser_toolbar import BrowserToolbar
-from ui.widgets.browser.page_loading_bar import LoadingBar
+from PySide6.QtWidgets import QApplication
 from services.service_container import ServiceContainer
 from services.service_names import ServiceNames
 
+from core.browser.browser import Browser
+
+from ui.dialogs.settings_dialog import SettingsDialog
+from ui.widgets.browser.browser_toolbar import BrowserToolbar
+from ui.widgets.browser.page_loading_bar import LoadingBar
 
 
 class MainWindow(QMainWindow):
@@ -37,97 +37,116 @@ class MainWindow(QMainWindow):
     - Build UI
     - Connect widgets together
     - Forward user actions
+    - Shutdown browser resources safely
     """
 
     # -------------------------------------------------
+    # Constructor
+    # -------------------------------------------------
 
     def __init__(
-    self,
-    services: ServiceContainer,
-    parent: QWidget | None = None,
-) -> None:
-    
+        self,
+        services: ServiceContainer,
+        parent: QWidget | None = None,
+    ) -> None:
+
         super().__init__(parent)
-    
+
         # ---------------------------------------------
         # Services
         # ---------------------------------------------
-    
+
         self.services = services
-    
+
         self.settings_service = services.resolve(
             ServiceNames.SETTINGS
         )
-    
+
         self.appearance_service = services.resolve(
             ServiceNames.APPEARANCE
         )
-    
+
         self.profile_service = services.resolve(
             ServiceNames.PROFILE
         )
-    
+
         self.browser_service = services.resolve(
             ServiceNames.BROWSER
         )
-    
+
+        # ---------------------------------------------
+        # Shutdown state
+        # ---------------------------------------------
+
+        self._shutdown_started = False
+
         # ---------------------------------------------
         # Window
         # ---------------------------------------------
-    
+
         self.setWindowTitle(
             "MRGpt Browser"
         )
-    
+
         self.resize(
             1500,
             900,
         )
-    
+
         # ---------------------------------------------
-        # UI
+        # Create Browser + Widgets
         # ---------------------------------------------
-    
+
         self._create_browser()
-    
+
+        # ---------------------------------------------
+        # Build UI
+        # ---------------------------------------------
+
         self._build_ui()
-    
+
         self._create_statusbar()
-    
+
         self._connect_signals()
-    
+
         # ---------------------------------------------
         # Initial Page
         # ---------------------------------------------
-    
+
         self.browser.new_tab(
             QUrl(
                 self.settings_service.home_page
             )
         )
-    # -------------------------------------------------
-    # Widgets
-    # -------------------------------------------------
 
-    def _create_widgets(self) -> None:
+    # =================================================
+    # Browser / Widgets
+    # =================================================
 
-        self.toolbar = BrowserToolbar()
-
-        self.loading_bar = LoadingBar()
+    def _create_browser(self) -> None:
+        """
+        Create browser facade and browser widgets.
+        """
 
         self.browser = Browser(
             self.services
         )
 
-    # -------------------------------------------------
+        self.toolbar = BrowserToolbar()
+
+        self.loading_bar = LoadingBar()
+
+    # =================================================
     # UI
-    # -------------------------------------------------
+    # =================================================
 
     def _build_ui(self) -> None:
 
         container = QWidget()
 
-        layout = QVBoxLayout(container)
+        layout = QVBoxLayout(
+            container
+        )
 
         layout.setContentsMargins(
             0,
@@ -155,9 +174,9 @@ class MainWindow(QMainWindow):
             container
         )
 
-    # -------------------------------------------------
+    # =================================================
     # Status Bar
-    # -------------------------------------------------
+    # =================================================
 
     def _create_statusbar(self) -> None:
 
@@ -185,15 +204,15 @@ class MainWindow(QMainWindow):
             self.ssl_label
         )
 
-    # -------------------------------------------------
+    # =================================================
     # Signals
-    # -------------------------------------------------
+    # =================================================
 
     def _connect_signals(self) -> None:
 
-        #
+        # ---------------------------------------------
         # Toolbar
-        #
+        # ---------------------------------------------
 
         self.toolbar.back_requested.connect(
             self.browser.back
@@ -218,14 +237,14 @@ class MainWindow(QMainWindow):
         self.toolbar.navigate_requested.connect(
             self.browser.navigate
         )
-        
-        self.toolbar.settings_requested.connect(
-    self._open_settings
-)
 
-        #
+        self.toolbar.settings_requested.connect(
+            self._open_settings
+        )
+
+        # ---------------------------------------------
         # Browser
-        #
+        # ---------------------------------------------
 
         self.browser.title_changed.connect(
             self.setWindowTitle
@@ -251,27 +270,30 @@ class MainWindow(QMainWindow):
             self._load_finished
         )
 
-    # -------------------------------------------------
+    # =================================================
+    # Home
+    # =================================================
 
     def _go_home(self) -> None:
 
         self.browser.navigate(
-            "https://www.google.com"
+            self.settings_service.home_page
         )
 
-    # -------------------------------------------------
+    # =================================================
+    # Navigation State
+    # =================================================
 
     def _update_navigation_state(self) -> None:
 
         self.toolbar.set_navigation_state(
-
             self.browser.can_go_back(),
-
             self.browser.can_go_forward(),
-
         )
 
-    # -------------------------------------------------
+    # =================================================
+    # Loading
+    # =================================================
 
     def _load_started(self) -> None:
 
@@ -313,7 +335,9 @@ class MainWindow(QMainWindow):
             False
         )
 
-    # -------------------------------------------------
+    # =================================================
+    # Keyboard
+    # =================================================
 
     def keyPressEvent(
         self,
@@ -331,42 +355,14 @@ class MainWindow(QMainWindow):
         super().keyPressEvent(
             event
         )
-        
-   
-   
-    def _create_browser(self) -> None:
-        """
-        Create the browser facade.
 
-        Browser resolves its required services
-        from the application service container.
-        """
+    # =================================================
+    # Settings
+    # =================================================
 
-        self.browser = Browser(
-            self.services
-        )
-
-        self.toolbar = BrowserToolbar()
-
-        self.loading_bar = LoadingBar()
-        
-    
     def _open_settings(self) -> None:
         """
-        Open the application settings dialog.
-        """
-        dialog = SettingsDialog(
-    self.settings_service,
-    self.appearance_service,
-    self,
-)
-
-        dialog.exec()
-        
-   
-    def _open_settings(self) -> None:
-        """
-        Open the application settings dialog.
+        Open application settings dialog.
         """
 
         dialog = SettingsDialog(
@@ -377,10 +373,54 @@ class MainWindow(QMainWindow):
 
         dialog.exec()
 
+    # =================================================
+    # Shutdown
+    # =================================================
+    def closeEvent(
+    self,
+    event,
+) -> None:
+        """
+        Close the main window and shutdown browser resources.
+        """
 
+        if self._shutdown_started:
+
+            event.accept()
+
+            return
+
+        self._shutdown_started = True
+
+        print(
+            "🧹 MAIN WINDOW CLOSE EVENT"
+        )
+
+        # ---------------------------------------------
+        # Shutdown Browser
+        # ---------------------------------------------
+
+        if self.browser is not None:
+
+            self.browser.shutdown()
+
+            print(
+                "✅ BROWSER SHUTDOWN COMPLETED"
+            )
+
+        # ---------------------------------------------
+        # Process deferred QObject deletion
+        # ---------------------------------------------
+
+        QApplication.processEvents()
+
+        # ---------------------------------------------
+        # Accept close
+        # ---------------------------------------------
+
+        event.accept()
+
+        print(
+            "🧹 MAIN WINDOW CLOSE EVENT FINISHED"
+        )
     
-        
-
-    
-
-

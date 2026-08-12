@@ -229,6 +229,49 @@ class SettingsService:
             SettingsKeys.DOWNLOAD_PATH,
             value,
         )
+        
+    @property
+    def ask_download_location(self) -> bool:
+
+        return bool(
+            self.value(
+                SettingsKeys.ASK_DOWNLOAD_LOCATION
+            )
+        )
+
+    @ask_download_location.setter
+    def ask_download_location(
+        self,
+        value: bool,
+    ) -> None:
+
+        self.set_value(
+            SettingsKeys.ASK_DOWNLOAD_LOCATION,
+            value,
+        )
+
+
+    # -------------------------------------------------
+
+    @property
+    def open_after_download(self) -> bool:
+
+        return bool(
+            self.value(
+                SettingsKeys.OPEN_AFTER_DOWNLOAD
+            )
+        )
+
+    @open_after_download.setter
+    def open_after_download(
+        self,
+        value: bool,
+    ) -> None:
+
+        self.set_value(
+            SettingsKeys.OPEN_AFTER_DOWNLOAD,
+            value,
+        )
 
     # =================================================
     # Privacy

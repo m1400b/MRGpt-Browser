@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
     QTabWidget,
     QVBoxLayout,
 )
-
+from ui.pages.settings.downloads_page import DownloadsPage
 from services.settings_service import SettingsService
 from services.appearance_service import AppearanceService
 
@@ -64,16 +64,20 @@ class SettingsDialog(QDialog):
     def _create_widgets(self) -> None:
 
         self.pages = QTabWidget()
-    
+
         self.general_page = GeneralPage(
             self.settings
         )
-    
+
         self.appearance_page = AppearancePage(
             self.settings,
             self.appearance_service,
         )
-    
+        
+        self.downloads_page = DownloadsPage(
+    self.settings
+)
+
         self.buttons = QDialogButtonBox(
             QDialogButtonBox.Ok
             | QDialogButtonBox.Apply
@@ -97,6 +101,11 @@ class SettingsDialog(QDialog):
             self.appearance_page,
             "Appearance",
         )
+        
+        self.pages.addTab(
+    self.downloads_page,
+    "Downloads",
+)
 
         layout.addWidget(
             self.pages

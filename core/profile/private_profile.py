@@ -18,6 +18,11 @@ class PrivateProfile(BrowserProfile):
         super().__init__("Private")
 
         profile = self.qt_profile
+        
+        print(
+    "PRIVATE PROFILE:",
+    profile
+)
 
         profile.setHttpCacheType(
             QWebEngineProfile.MemoryHttpCache
