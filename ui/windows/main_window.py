@@ -10,6 +10,7 @@ from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import (
+    QDialog,
     QLabel,
     QMainWindow,
     QProgressBar,
@@ -20,13 +21,16 @@ from PySide6.QtWidgets import (
 from PySide6.QtWidgets import QApplication
 from services.service_container import ServiceContainer
 from services.service_names import ServiceNames
-
+from ui.windows.download_manager_window import (
+    DownloadManagerWindow,
+)
 from core.browser.browser import Browser
+from ui.widgets.browser.browser_menu import BrowserMenu
 
 from ui.dialogs.settings_dialog import SettingsDialog
 from ui.widgets.browser.browser_toolbar import BrowserToolbar
 from ui.widgets.browser.page_loading_bar import LoadingBar
-
+from ui.dialogs.download_exit_dialog import DownloadExitDialog
 
 class MainWindow(QMainWindow):
     """
@@ -73,12 +77,20 @@ class MainWindow(QMainWindow):
         self.browser_service = services.resolve(
             ServiceNames.BROWSER
         )
+        
+        self.download_manager = services.resolve(
+    ServiceNames.DOWNLOADS
+)
 
         # ---------------------------------------------
         # Shutdown state
         # ---------------------------------------------
 
         self._shutdown_started = False
+        
+        self._download_manager_window = None
+        
+        self._browser_menu = None
 
         # ---------------------------------------------
         # Window
@@ -241,6 +253,26 @@ class MainWindow(QMainWindow):
         self.toolbar.settings_requested.connect(
             self._open_settings
         )
+        
+        self.toolbar.menu_requested.connect(
+    self._open_browser_menu
+)
+        
+        self._browser_menu = BrowserMenu(
+            self
+        )
+
+        self._browser_menu.downloads_requested.connect(
+            self._open_download_manager
+        )
+
+        self._browser_menu.settings_requested.connect(
+            self._open_settings
+        )
+
+        self._browser_menu.exit_requested.connect(
+            self.close
+        )
 
         # ---------------------------------------------
         # Browser
@@ -381,7 +413,8 @@ class MainWindow(QMainWindow):
     event,
 ) -> None:
         """
-        Close the main window and shutdown browser resources.
+        Shutdown browser resources before the
+        main window is destroyed.
         """
 
         if self._shutdown_started:
@@ -390,15 +423,44 @@ class MainWindow(QMainWindow):
 
             return
 
+        # ---------------------------------------------
+        # Check active downloads
+        # ---------------------------------------------
+
+        if self.download_manager.has_active_downloads():
+
+            active_count = len(
+                self.download_manager.active_downloads()
+            )
+
+            dialog = DownloadExitDialog(
+                active_count,
+                self,
+            )
+
+            result = dialog.exec()
+
+            if result != QDialog.Accepted:
+
+                event.ignore()
+
+                return
+            
+            # ---------------------------------------------
+            # User chose "Exit Anyway"
+            # ---------------------------------------------
+
+            self.download_manager.cancel_all_active()
+
+        # ---------------------------------------------
+        # Shutdown
+        # ---------------------------------------------
+
         self._shutdown_started = True
 
         print(
             "🧹 MAIN WINDOW CLOSE EVENT"
         )
-
-        # ---------------------------------------------
-        # Shutdown Browser
-        # ---------------------------------------------
 
         if self.browser is not None:
 
@@ -408,19 +470,63 @@ class MainWindow(QMainWindow):
                 "✅ BROWSER SHUTDOWN COMPLETED"
             )
 
-        # ---------------------------------------------
-        # Process deferred QObject deletion
-        # ---------------------------------------------
-
-        QApplication.processEvents()
-
-        # ---------------------------------------------
-        # Accept close
-        # ---------------------------------------------
-
         event.accept()
 
         print(
             "🧹 MAIN WINDOW CLOSE EVENT FINISHED"
         )
+        
+    def _open_download_manager(self) -> None:
+        """
+        Open the standalone Download Manager window.
+        """
+
+        if (
+            hasattr(
+                self,
+                "_download_manager_window",
+            )
+            and self._download_manager_window is not None
+        ):
+
+            self._download_manager_window.show()
+            self._download_manager_window.raise_()
+            self._download_manager_window.activateWindow()
+
+            return
+
+        self._download_manager_window = DownloadManagerWindow(
+            self.services,
+            self,
+        )
+
+        self._download_manager_window.show()
     
+    def _open_browser_menu(self) -> None:
+        """
+        Open browser main menu.
+        """
+    
+        if self._browser_menu is None:
+        
+            self._browser_menu = BrowserMenu(
+                self
+            )
+    
+            self._browser_menu.downloads_requested.connect(
+                self._open_download_manager
+            )
+    
+            self._browser_menu.settings_requested.connect(
+                self._open_settings
+            )
+    
+            self._browser_menu.exit_requested.connect(
+                self.close
+            )
+    
+        self._browser_menu.exec(
+            self.toolbar.menu_button.mapToGlobal(
+                self.toolbar.menu_button.rect().bottomLeft()
+            )
+        )
