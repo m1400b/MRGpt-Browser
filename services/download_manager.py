@@ -12,7 +12,7 @@ from PySide6.QtCore import QObject, Signal
 from PySide6.QtWebEngineCore import QWebEngineDownloadRequest
 
 from models.download_item import DownloadItem
-
+import time
 
 class DownloadManager(QObject):
     """
@@ -26,6 +26,7 @@ class DownloadManager(QObject):
     - Track progress
     - Handle completion
     - Handle cancellation
+    - Provide information about active downloads
     """
 
     # -------------------------------------------------
@@ -40,6 +41,8 @@ class DownloadManager(QObject):
 
     download_failed = Signal(object)
 
+    # -------------------------------------------------
+    # Constructor
     # -------------------------------------------------
 
     def __init__(
@@ -56,6 +59,10 @@ class DownloadManager(QObject):
 
         # Requests that have already been accepted.
         self._accepted_requests: set[int] = set()
+        self._last_progress: dict[
+    int,
+    tuple[int, float],
+] = {}
 
     # =================================================
     # Public API
@@ -65,6 +72,48 @@ class DownloadManager(QObject):
 
         return list(
             self._downloads
+        )
+
+    # -------------------------------------------------
+
+    def active_downloads(self) -> list[DownloadItem]:
+        """
+        Return currently active downloads.
+
+        Active means the download has not been
+        completed, cancelled, or interrupted.
+        """
+
+        return [
+            item
+            for item in self._downloads
+            if item.is_active
+        ]
+
+    # -------------------------------------------------
+
+    def has_active_downloads(self) -> bool:
+        """
+        Return True when at least one download
+        is currently active.
+        """
+
+        return any(
+            item.is_active
+            for item in self._downloads
+        )
+
+    # -------------------------------------------------
+
+    def active_download_count(self) -> int:
+        """
+        Return the number of active downloads.
+        """
+
+        return sum(
+            1
+            for item in self._downloads
+            if item.is_active
         )
 
     # =================================================
@@ -156,6 +205,13 @@ class DownloadManager(QObject):
         )
 
         item.state = "downloading"
+        
+        self._last_progress[
+    id(item)
+] = (
+    0,
+    item.started_at.timestamp(),
+)
 
         # -------------------------------------------------
         # Store
@@ -226,9 +282,9 @@ class DownloadManager(QObject):
     # =================================================
 
     def _update_progress(
-        self,
-        item: DownloadItem,
-    ) -> None:
+    self,
+    item: DownloadItem,
+) -> None:
 
         request = item._request
 
@@ -240,15 +296,53 @@ class DownloadManager(QObject):
 
         total = request.totalBytes()
 
+        # -------------------------------------------------
+        # Calculate speed
+        # -------------------------------------------------
+
+        now = __import__(
+            "time"
+        ).monotonic()
+
+        previous = self._last_progress.get(
+            id(item)
+        )
+
+        if previous is not None:
+
+            previous_bytes, previous_time = previous
+
+            elapsed = now - previous_time
+
+            if elapsed > 0:
+
+                item.speed = (
+                    received - previous_bytes
+                ) / elapsed
+
+        self._last_progress[
+            id(item)
+        ] = (
+            received,
+            now,
+        )
+
+        # -------------------------------------------------
+        # Update model
+        # -------------------------------------------------
+
         item.update_progress(
             received,
             total,
         )
 
+        # -------------------------------------------------
+        # Emit update
+        # -------------------------------------------------
+
         self.download_updated.emit(
             item
         )
-
     # =================================================
     # State
     # =================================================
@@ -341,6 +435,23 @@ class DownloadManager(QObject):
 
     # -------------------------------------------------
 
+    def cancel_all_active(self) -> None:
+        """
+        Cancel all currently active downloads.
+
+        This is intended to be used when the user
+        explicitly chooses to close the browser
+        while downloads are still running.
+        """
+
+        for item in self.active_downloads():
+
+            self.cancel(
+                item
+            )
+
+    # -------------------------------------------------
+
     def pause(
         self,
         item: DownloadItem,
@@ -380,3 +491,21 @@ class DownloadManager(QObject):
         self.download_updated.emit(
             item
         )
+
+    # =================================================
+    # Shutdown
+    # =================================================
+
+    def shutdown(self) -> None:
+        """
+        Shutdown the download manager.
+
+        IMPORTANT:
+        This method does not automatically cancel
+        active downloads. The decision to cancel
+        downloads belongs to the application/UI
+        shutdown flow.
+        """
+
+        self._accepted_requests.clear()
+        self._last_progress.clear()
