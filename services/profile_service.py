@@ -163,3 +163,19 @@ class ProfileService(QObject):
     def current_name(self) -> Optional[str]:
 
         return self._current_name
+    
+    # =================================================
+    # Shutdown
+    # =================================================
+    
+    def shutdown(self) -> None:
+        """
+        Shutdown all registered browser profiles.
+    
+        Profiles are released only after browser tabs/pages
+        have already been closed by the Browser facade.
+        """
+    
+        self._profiles.clear()
+    
+        self._current_name = None

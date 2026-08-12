@@ -6,7 +6,12 @@ Browser Page
 
 from __future__ import annotations
 
-from PySide6.QtCore import QObject, Signal, QUrl
+from PySide6.QtCore import (
+    QObject,
+    Signal,
+    QUrl,
+)
+
 from PySide6.QtWebEngineCore import (
     QWebEnginePage,
     QWebEngineProfile,
@@ -16,19 +21,25 @@ from PySide6.QtWebEngineCore import (
 
 class BrowserPage(QWebEnginePage):
 
+    # -------------------------------------------------
+    # Signals
+    # -------------------------------------------------
+
     new_tab_requested = Signal(QUrl)
 
-    new_window_requested = Signal(QWebEnginePage.WebWindowType)
+    new_window_requested = Signal(
+        QWebEnginePage.WebWindowType
+    )
 
-    download_requested = Signal(QUrl)
+    download_requested = Signal(object)
 
     permission_requested = Signal(str)
 
     javascript_console = Signal(
         object,
-    str,
-    int,
-    str
+        str,
+        int,
+        str,
     )
 
     certificate_error = Signal(str)
@@ -41,31 +52,87 @@ class BrowserPage(QWebEnginePage):
 
     icon_changed = Signal()
 
+    # -------------------------------------------------
+    # Constructor
+    # -------------------------------------------------
 
     def __init__(
         self,
-        profile: QWebEngineProfile,
-        parent: QObject | None = None
-    ):
+        profile,
+        parent: QObject | None = None,
+    ) -> None:
+
+        # ---------------------------------------------
+        # IMPORTANT
+        #
+        # profile may be:
+        #
+        # BrowserProfile
+        # OR
+        #
+        # QWebEngineProfile
+        #
+        # Always normalize it here.
+        # ---------------------------------------------
+
+        if hasattr(
+            profile,
+            "qt_profile",
+        ):
+
+            profile = profile.qt_profile
+
+        if not isinstance(
+            profile,
+            QWebEngineProfile,
+        ):
+
+            raise TypeError(
+                "BrowserPage requires "
+                "BrowserProfile or QWebEngineProfile."
+            )
 
         super().__init__(
             profile,
-            parent
+            parent,
         )
+
+        # ---------------------------------------------
+        # Debug
+        # ---------------------------------------------
+
+        print(
+            "🔥 BROWSER PAGE PROFILE:",
+            self.profile(),
+        )
+
+        print(
+            "🔥 BROWSER PAGE OBJECT:",
+            self,
+        )
+
+        # ---------------------------------------------
+        # Page signals
+        # ---------------------------------------------
 
         self.titleChanged.connect(
             self.title_changed.emit
         )
 
         self.iconChanged.connect(
-            lambda _: self.icon_changed.emit()
+            lambda _icon:
+            self.icon_changed.emit()
         )
 
+    # =================================================
+    # Windows / Tabs
+    # =================================================
 
     def createWindow(
-    self,
-    window_type
-):
+        self,
+        window_type:
+        QWebEnginePage.WebWindowType,
+    ):
 
         page = BrowserPage(
             self.profile()
@@ -73,16 +140,25 @@ class BrowserPage(QWebEnginePage):
 
         page.urlChanged.connect(
             lambda url:
-            self.new_tab_requested.emit(url)
+            self.new_tab_requested.emit(
+                url
+            )
+        )
+
+        self.new_window_requested.emit(
+            window_type
         )
 
         return page
-    
-    
+
+    # =================================================
+    # Certificate
+    # =================================================
+
     def certificateError(
         self,
-        error: QWebEngineCertificateError
-    ):
+        error: QWebEngineCertificateError,
+    ) -> bool:
 
         self.certificate_error.emit(
             error.description()
@@ -90,34 +166,40 @@ class BrowserPage(QWebEnginePage):
 
         return False
 
+    # =================================================
+    # JavaScript Console
+    # =================================================
 
     def javaScriptConsoleMessage(
         self,
         level,
         message,
         line_number,
-        source_id
-    ):
+        source_id,
+    ) -> None:
 
         level_value = getattr(
             level,
             "value",
-            level
+            level,
         )
 
         self.javascript_console.emit(
             level_value,
             message,
             line_number,
-            source_id
+            source_id,
         )
 
+    # =================================================
+    # Permissions
+    # =================================================
 
     def featurePermissionRequested(
         self,
         security_origin,
-        feature
-    ):
+        feature,
+    ) -> None:
 
         self.permission_requested.emit(
             security_origin.toString()
@@ -126,48 +208,65 @@ class BrowserPage(QWebEnginePage):
         self.setFeaturePermission(
             security_origin,
             feature,
-            QWebEnginePage.PermissionDeniedByUser
+            QWebEnginePage.PermissionDeniedByUser,
         )
 
+    # =================================================
+    # File Dialog
+    # =================================================
 
     def chooseFiles(
         self,
         mode,
         old_files,
-        accepted_mime_types
+        accepted_mime_types,
     ):
 
         self.file_dialog_requested.emit()
 
         return []
 
+    # =================================================
+    # Compatibility
+    # =================================================
 
     def trigger_download(
         self,
-        url: QUrl
-    ):
+        url: QUrl,
+    ) -> None:
 
-        self.download_requested.emit(url)
+        self.download_requested.emit(
+            url
+        )
 
+    # -------------------------------------------------
 
     def create_new_tab(
         self,
-        url: QUrl
-    ):
+        url: QUrl,
+    ) -> None:
 
-        self.new_tab_requested.emit(url)
-    
+        self.new_tab_requested.emit(
+            url
+        )
+
+    # -------------------------------------------------
+
     def open_url(
-    self,
-    url: QUrl
-):
+        self,
+        url: QUrl,
+    ) -> None:
 
         self.load(url)
-        
+
+    # -------------------------------------------------
+
     def current_url(self):
 
         return self.url()
-    
+
+    # -------------------------------------------------
+
     def profile_object(self):
 
         return self.profile()
