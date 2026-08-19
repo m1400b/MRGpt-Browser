@@ -11,17 +11,14 @@ import sqlite3
 
 class MigrationManager:
     """
-    Create and upgrade database schema.
+    Create application database schema.
     """
 
     # -------------------------------------------------
 
     def __init__(
-
         self,
-
         connection: sqlite3.Connection,
-
     ):
 
         self.connection = connection
@@ -31,7 +28,7 @@ class MigrationManager:
     def migrate(self):
 
         """
-        Run all migrations.
+        Create all application tables.
         """
 
         self._create_history_table()
@@ -118,38 +115,66 @@ class MigrationManager:
     # Downloads
     # =================================================
 
+    # =================================================
+    # Downloads
+    # =================================================
+    
     def _create_download_table(self):
-
+    
         self.connection.execute(
-
+        
             """
             CREATE TABLE IF NOT EXISTS downloads(
-
+    
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-
+    
+                uuid TEXT NOT NULL UNIQUE,
+    
+                filename TEXT,
+    
                 url TEXT,
-
-                file_name TEXT,
-
-                save_path TEXT,
-
+    
+                directory TEXT,
+    
                 mime_type TEXT,
-
-                total_bytes INTEGER,
-
-                received_bytes INTEGER,
-
-                state TEXT,
-
+    
+                total_bytes INTEGER DEFAULT 0,
+    
+                received_bytes INTEGER DEFAULT 0,
+    
+                progress REAL DEFAULT 0.0,
+    
+                speed REAL DEFAULT 0.0,
+    
+                remaining_seconds INTEGER DEFAULT -1,
+    
+                state TEXT DEFAULT 'waiting',
+    
+                paused INTEGER DEFAULT 0,
+    
+                finished INTEGER DEFAULT 0,
+    
+                successful INTEGER DEFAULT 0,
+    
+                canceled INTEGER DEFAULT 0,
+    
+                interrupted INTEGER DEFAULT 0,
+    
+                started_at TEXT,
+    
+                finished_at TEXT,
+    
                 created_at TEXT,
-
-                updated_at TEXT
-
+    
+                updated_at TEXT,
+    
+                is_deleted INTEGER DEFAULT 0
+    
             )
             """
-
+    
         )
-
+    
     # =================================================
     # Settings
     # =================================================
@@ -289,3 +314,4 @@ class MigrationManager:
             """
 
         )
+

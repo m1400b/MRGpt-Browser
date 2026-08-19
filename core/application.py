@@ -7,22 +7,34 @@ Application
 from __future__ import annotations
 
 import sys
-
+from pathlib import Path
 from PySide6.QtWidgets import QApplication
 from services.network_service import NetworkService
 from services.service_container import ServiceContainer
 from services.service_names import ServiceNames
 
+from database.database_manager import DatabaseManager
+from database.migrations import MigrationManager
+from database.repository.download_repository import (
+    DownloadRepository
+)
 from services.appearance_service import AppearanceService
 from services.settings_service import SettingsService
 from services.profile_service import ProfileService
 from services.browser_service import BrowserService
 from services.network_service import NetworkService
 
+from database.database_manager import DatabaseManager
+from database.migrations import MigrationManager
+
 from core.profile.private_profile import PrivateProfile
 
 from ui.windows.main_window import MainWindow
 from services.download_manager import DownloadManager
+
+from database.database_manager import DatabaseManager
+from database.migrations import MigrationManager
+from database.repository.download_repository import DownloadRepository
 
 class Application:
     """
@@ -80,9 +92,9 @@ class Application:
     
     def _register_services(self) -> None:
 
-    # ---------------------------------------------
-    # Settings
-    # ---------------------------------------------
+        # ---------------------------------------------
+        # Settings
+        # ---------------------------------------------
 
         settings_service = SettingsService()
 
@@ -91,7 +103,31 @@ class Application:
             settings_service,
         )
 
-    # ---------------------------------------------
+        # ---------------------------------------------
+        # Database
+        # ---------------------------------------------
+
+        database_path = (
+            Path.home()
+            / ".mrgpt"
+            / "mrgpt.db"
+        )
+
+        database_manager = DatabaseManager(
+            str(database_path)
+        )
+
+        connection = database_manager.connect()
+
+        MigrationManager(
+            connection
+        ).migrate()
+
+        download_repository = DownloadRepository(
+            connection
+        )
+
+        # ---------------------------------------------
         # Profile
         # ---------------------------------------------
 
@@ -114,7 +150,8 @@ class Application:
         # ---------------------------------------------
 
         download_manager = DownloadManager(
-            settings_service
+            settings_service,
+            download_repository,
         )
 
         self.services.register(
@@ -130,8 +167,6 @@ class Application:
             download_manager.handle_download
         )
 
-        
-
         # ---------------------------------------------
         # Browser
         # ---------------------------------------------
@@ -140,8 +175,8 @@ class Application:
 
         self.services.register(
             ServiceNames.BROWSER,
-            browser_service
-        )    
+            browser_service,
+        )
 
         # ---------------------------------------------
         # Network
@@ -167,8 +202,6 @@ class Application:
             ServiceNames.APPEARANCE,
             appearance_service,
         )
-
-
 
     # -------------------------------------------------
 

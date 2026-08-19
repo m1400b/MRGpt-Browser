@@ -14,6 +14,14 @@ from PySide6.QtWidgets import (
     QPushButton,
 )
 
+from PySide6.QtCore import (
+    Qt,
+    Signal,
+    QUrl,
+    QPropertyAnimation,
+    QEasingCurve,
+)
+
 from ui.widgets.browser.address_bar import AddressBar
 
 
@@ -55,6 +63,8 @@ class BrowserToolbar(QWidget):
     ) -> None:
 
         super().__init__(parent)
+        
+        self._download_animation = None
 
         self._create_widgets()
 
@@ -283,6 +293,98 @@ class BrowserToolbar(QWidget):
 
         self.reload_button.setText(
             "✕" if loading else "⟳"
+        )
+        
+    # =================================================
+    # Download Activity
+    # =================================================
+    
+    def set_download_active(
+        self,
+        active: bool,
+    ) -> None:
+        """
+        Indicate whether downloads are currently active.
+        """
+    
+        if active:
+        
+            self._start_download_animation()
+    
+        else:
+        
+            self._stop_download_animation()
+    
+    
+    # -------------------------------------------------
+    
+    def _start_download_animation(self) -> None:
+    
+        if self._download_animation is not None:
+        
+            if (
+                self._download_animation.state()
+                == QPropertyAnimation.Running
+            ):
+    
+                return
+    
+        self.menu_button.setStyleSheet(
+            """
+            QPushButton {
+                background-color: #198754;
+                border-radius: 6px;
+            }
+            """
+        )
+    
+        self._download_animation = QPropertyAnimation(
+            self.menu_button,
+            b"windowOpacity",
+            self,
+        )
+    
+        self._download_animation.setDuration(
+            700
+        )
+    
+        self._download_animation.setStartValue(
+            0.65
+        )
+    
+        self._download_animation.setEndValue(
+            1.0
+        )
+    
+        self._download_animation.setEasingCurve(
+            QEasingCurve.InOutSine
+        )
+    
+        self._download_animation.setLoopCount(
+            -1
+        )
+    
+        self._download_animation.start()
+    
+    
+    # -------------------------------------------------
+    
+    def _stop_download_animation(self) -> None:
+    
+        if self._download_animation is not None:
+        
+            self._download_animation.stop()
+    
+            self._download_animation.deleteLater()
+    
+            self._download_animation = None
+    
+        self.menu_button.setWindowOpacity(
+            1.0
+        )
+    
+        self.menu_button.setStyleSheet(
+            ""
         )
 
     # =================================================
