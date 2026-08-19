@@ -301,6 +301,18 @@ class MainWindow(QMainWindow):
         self.browser.load_finished.connect(
             self._load_finished
         )
+        
+        self.download_manager.download_added.connect(
+    self._download_started
+)
+
+        self.download_manager.download_finished.connect(
+            self._download_state_changed
+        )
+
+        self.download_manager.download_failed.connect(
+            self._download_state_changed
+        )
 
     # =================================================
     # Home
@@ -450,7 +462,7 @@ class MainWindow(QMainWindow):
             # User chose "Exit Anyway"
             # ---------------------------------------------
 
-            self.download_manager.cancel_all_active()
+            self.download_manager.pause_all_active()
 
         # ---------------------------------------------
         # Shutdown
@@ -529,4 +541,29 @@ class MainWindow(QMainWindow):
             self.toolbar.menu_button.mapToGlobal(
                 self.toolbar.menu_button.rect().bottomLeft()
             )
+        )
+    
+    # =================================================
+    # Downloads
+    # =================================================
+
+    def _download_started(
+        self,
+        item,
+    ) -> None:
+
+        self.toolbar.set_download_active(
+            True
+        )
+
+
+    # -------------------------------------------------
+
+    def _download_state_changed(
+        self,
+        item,
+    ) -> None:
+
+        self.toolbar.set_download_active(
+            self.download_manager.has_active_downloads()
         )

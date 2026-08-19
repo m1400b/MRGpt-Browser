@@ -25,6 +25,8 @@ class ServiceNames:
     BROWSER: Final[str] = "browser"
     
     APPEARANCE: Final[str] = "appearance"
+    
+    DATABASE: Final[str] = "database"
 
     # -------------------------------------------------
     # Browser
