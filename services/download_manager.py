@@ -16,6 +16,9 @@ from PySide6.QtCore import (
     Signal,
 )
 
+import os
+
+from PySide6.QtGui import QDesktopServices
 from PySide6.QtNetwork import (
     QNetworkAccessManager,
     QNetworkReply,
@@ -890,6 +893,403 @@ class DownloadManager(QObject):
             self.cancel(
                 item
             )
+
+
+    # =========================================================
+
+        # =========================================================
+    # Download File Operations
+    # =========================================================
+
+    def open_file(
+        self,
+        item: DownloadItem,
+    ) -> bool:
+        """
+        Open the downloaded file using the operating system.
+        """
+
+        if item is None:
+
+            return False
+
+        path = Path(
+            item.full_path
+        )
+
+        # -----------------------------------------------------
+        # Only completed downloads can be opened.
+        # -----------------------------------------------------
+
+        if not item.is_completed:
+
+            print(
+                "⚠️ OPEN FILE IGNORED: "
+                "DOWNLOAD NOT COMPLETED"
+            )
+
+            return False
+
+        # -----------------------------------------------------
+        # File must exist.
+        # -----------------------------------------------------
+
+        if not path.exists():
+
+            print(
+                "❌ OPEN FILE FAILED: FILE NOT FOUND"
+            )
+
+            print(
+                "PATH:",
+                path,
+            )
+
+            return False
+
+        if not path.is_file():
+
+            print(
+                "❌ OPEN FILE FAILED: "
+                "PATH IS NOT A FILE"
+            )
+
+            return False
+
+        # -----------------------------------------------------
+        # Open with default application.
+        # -----------------------------------------------------
+
+        try:
+
+            success = QDesktopServices.openUrl(
+                QUrl.fromLocalFile(
+                    str(path)
+                )
+            )
+
+        except Exception as exc:
+
+            print(
+                "❌ OPEN FILE ERROR:",
+                exc,
+            )
+
+            return False
+
+        if success:
+
+            print(
+                "📂 DOWNLOAD FILE OPENED:"
+            )
+
+            print(
+                "PATH:",
+                path,
+            )
+
+        else:
+
+            print(
+                "❌ OPERATING SYSTEM FAILED "
+                "TO OPEN FILE:"
+            )
+
+            print(
+                "PATH:",
+                path,
+            )
+
+        return bool(
+            success
+        )
+
+    # ---------------------------------------------------------
+
+    def open_folder(
+        self,
+        item: DownloadItem,
+    ) -> bool:
+        """
+        Open the folder containing the downloaded file.
+        """
+
+        if item is None:
+
+            return False
+
+        # -----------------------------------------------------
+        # Directory from DownloadItem.
+        # -----------------------------------------------------
+
+        directory = Path(
+            item.directory
+        )
+
+        if not item.directory:
+
+            directory = Path(
+                item.full_path
+            ).parent
+
+        # -----------------------------------------------------
+        # Directory must exist.
+        # -----------------------------------------------------
+
+        if not directory.exists():
+
+            print(
+                "❌ OPEN FOLDER FAILED: "
+                "DIRECTORY NOT FOUND"
+            )
+
+            print(
+                "DIRECTORY:",
+                directory,
+            )
+
+            return False
+
+        if not directory.is_dir():
+
+            print(
+                "❌ OPEN FOLDER FAILED: "
+                "PATH IS NOT A DIRECTORY"
+            )
+
+            return False
+
+        # -----------------------------------------------------
+        # Open folder.
+        # -----------------------------------------------------
+
+        try:
+
+            success = QDesktopServices.openUrl(
+                QUrl.fromLocalFile(
+                    str(
+                        directory
+                    )
+                )
+            )
+
+        except Exception as exc:
+
+            print(
+                "❌ OPEN FOLDER ERROR:",
+                exc,
+            )
+
+            return False
+
+        if success:
+
+            print(
+                "📁 DOWNLOAD FOLDER OPENED:"
+            )
+
+            print(
+                "DIRECTORY:",
+                directory,
+            )
+
+        else:
+
+            print(
+                "❌ OPERATING SYSTEM FAILED "
+                "TO OPEN FOLDER:"
+            )
+
+        return bool(
+            success
+        )
+
+    # ---------------------------------------------------------
+
+    def remove(
+        self,
+        item: DownloadItem,
+        delete_file: bool = False,
+    ) -> bool:
+        """
+        Remove a download from the manager/history.
+
+        Parameters
+        ----------
+        item:
+            DownloadItem to remove.
+
+        delete_file:
+            When True, also delete the downloaded file.
+
+        Notes
+        -----
+        The default behavior removes the item from the
+        download history but keeps the physical file.
+        """
+
+        if item is None:
+
+            return False
+
+        # -----------------------------------------------------
+        # Never remove an active download.
+        # -----------------------------------------------------
+
+        if item.is_active:
+
+            print(
+                "⚠️ REMOVE IGNORED: "
+                "DOWNLOAD IS ACTIVE"
+            )
+
+            return False
+
+        # -----------------------------------------------------
+        # Remove from resume runtime structures.
+        # -----------------------------------------------------
+
+        reply = self._resume_replies.pop(
+            item.id,
+            None,
+        )
+
+        if reply is not None:
+
+            try:
+
+                reply.abort()
+
+            except Exception as exc:
+
+                print(
+                    "⚠️ FAILED TO ABORT "
+                    "REMOVE RESUME REPLY:",
+                    exc,
+                )
+
+            try:
+
+                reply.deleteLater()
+
+            except Exception:
+
+                pass
+
+        self._pausing_resume_ids.discard(
+            item.id
+        )
+
+        self._last_progress.pop(
+            item.id,
+            None,
+        )
+
+        # -----------------------------------------------------
+        # Remove database record.
+        #
+        # DownloadRepository inherits the standard repository
+        # delete() contract.
+        # -----------------------------------------------------
+        # -----------------------------------------------------
+        # Already removed from manager
+        # -----------------------------------------------------
+        
+        if item not in self._downloads:
+        
+            print(
+                "⚠️ DOWNLOAD ALREADY REMOVED:"
+            )
+        
+            print(
+                "FILE:",
+                item.filename,
+            )
+        
+            return False
+
+
+        try:
+
+            self.repository.delete(
+                item.id
+            )
+
+        except Exception as exc:
+
+            print(
+                "❌ FAILED TO REMOVE "
+                "DOWNLOAD FROM DATABASE:",
+                exc,
+            )
+
+            return False
+
+        # -----------------------------------------------------
+        # Remove from memory.
+        # -----------------------------------------------------
+
+        try:
+
+            self._downloads.remove(
+                item
+            )
+
+        except ValueError:
+
+            pass
+
+        # -----------------------------------------------------
+        # Optional physical file deletion.
+        # -----------------------------------------------------
+
+        if delete_file:
+
+            path = Path(
+                item.full_path
+            )
+
+            if path.exists():
+
+                try:
+
+                    path.unlink()
+
+                    print(
+                        "🗑️ DOWNLOAD FILE DELETED:"
+                    )
+
+                    print(
+                        "PATH:",
+                        path,
+                    )
+
+                except OSError as exc:
+
+                    print(
+                        "⚠️ DOWNLOAD FILE "
+                        "DELETE FAILED:",
+                        exc,
+                    )
+
+        # -----------------------------------------------------
+        # Notify UI.
+        # -----------------------------------------------------
+
+        self.download_updated.emit(
+            item
+        )
+
+        print(
+            "🗑️ DOWNLOAD REMOVED:"
+        )
+
+        print(
+            "FILE:",
+            item.filename,
+        )
+
+        return True
 
     # =========================================================
     # Pause
