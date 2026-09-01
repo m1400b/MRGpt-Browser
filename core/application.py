@@ -14,9 +14,12 @@ from PySide6.QtWidgets import QApplication
 from database.database_manager import DatabaseManager
 from database.migrations import MigrationManager
 from database.repository.download_repository import DownloadRepository
+from database.repository.history_repository import HistoryRepository
+from managers.history_manager import HistoryManager
 from services.appearance_service import AppearanceService
 from services.browser_service import BrowserService
 from services.download_manager import DownloadManager
+from services.history_service import HistoryService
 from services.network_service import NetworkService
 from services.profile_service import ProfileService
 from services.service_container import ServiceContainer
@@ -55,10 +58,8 @@ class Application:
             ServiceNames.APPEARANCE
         ).apply()
 
-        # -------------------------------------------------
         # Privacy consent must be resolved before the
-        # browser window starts loading its first page.
-        # -------------------------------------------------
+        # browser starts loading its first page.
         self._handle_history_consent()
 
         self.window = MainWindow(
@@ -70,17 +71,9 @@ class Application:
     def _configure_qt(self) -> None:
         """Configure QApplication metadata."""
 
-        self.qt.setApplicationName(
-            "MRGpt Browser"
-        )
-
-        self.qt.setOrganizationName(
-            "MRGpt"
-        )
-
-        self.qt.setApplicationVersion(
-            "0.1.0"
-        )
+        self.qt.setApplicationName("MRGpt Browser")
+        self.qt.setOrganizationName("MRGpt")
+        self.qt.setApplicationVersion("0.1.0")
 
     # -------------------------------------------------
 
@@ -112,12 +105,24 @@ class Application:
 
         connection = database_manager.connect()
 
-        MigrationManager(
-            connection
-        ).migrate()
+        MigrationManager(connection).migrate()
 
-        download_repository = DownloadRepository(
-            connection
+        download_repository = DownloadRepository(connection)
+
+        # ---------------------------------------------
+        # History
+        # ---------------------------------------------
+
+        history_repository = HistoryRepository(connection)
+        history_manager = HistoryManager(history_repository)
+        history_service = HistoryService(
+            settings_service,
+            history_manager,
+        )
+
+        self.services.register(
+            ServiceNames.HISTORY,
+            history_service,
         )
 
         # ---------------------------------------------
@@ -125,7 +130,6 @@ class Application:
         # ---------------------------------------------
 
         profile_service = ProfileService()
-
         private_profile = PrivateProfile()
 
         profile_service.register(
@@ -195,14 +199,7 @@ class Application:
     # -------------------------------------------------
 
     def _handle_history_consent(self) -> None:
-        """
-        Resolve the user's browsing-history preference.
-
-        The dialog is shown only while the corresponding setting
-        says that the user should be asked. The selected preference
-        is always persisted. If the user checks "remember", the
-        startup prompt is disabled for subsequent launches.
-        """
+        """Resolve the user's browsing-history preference."""
 
         settings = self.services.resolve(
             ServiceNames.SETTINGS
@@ -217,18 +214,13 @@ class Application:
 
         result = dialog.exec()
 
-        # If the dialog is closed through the window manager, keep
-        # the current persisted preference and ask again next time.
+        # Closing the dialog without choosing a button leaves the
+        # persisted preference unchanged and asks again next time.
         if result != HistoryConsentDialog.Accepted:
             return
 
         settings.save_history = dialog.save_history
-
-        if dialog.remember_choice:
-            settings.ask_save_history = False
-        else:
-            settings.ask_save_history = True
-
+        settings.ask_save_history = not dialog.remember_choice
         settings.sync()
 
         print(
@@ -244,25 +236,14 @@ class Application:
         """Show main window and start Qt event loop."""
 
         self.window.show()
-
         return self.qt.exec()
 
     # -------------------------------------------------
 
     def shutdown(self) -> None:
-        """
-        Shutdown application safely.
+        """Shutdown application safely."""
 
-        Browser resources are released before profiles.
-        """
-
-        print(
-            "🧹 APPLICATION SHUTDOWN STARTED"
-        )
-
-        # ---------------------------------------------
-        # 1. Shutdown Browser
-        # ---------------------------------------------
+        print("🧹 APPLICATION SHUTDOWN STARTED")
 
         if self.window is not None:
             if (
@@ -270,38 +251,17 @@ class Application:
                 and self.window.browser is not None
             ):
                 self.window.browser.shutdown()
-
-                print(
-                    "✅ BROWSER RESOURCES RELEASED"
-                )
-
-        # ---------------------------------------------
-        # 2. Process deferred WebEngine deletions
-        # ---------------------------------------------
+                print("✅ BROWSER RESOURCES RELEASED")
 
         QApplication.processEvents()
 
-        # ---------------------------------------------
-        # 3. Close Main Window
-        # ---------------------------------------------
-
         if self.window is not None:
             self.window.close()
-
             QApplication.processEvents()
-
             self.window.deleteLater()
-
             self.window = None
-
             QApplication.processEvents()
-
-        # ---------------------------------------------
-        # 4. Shutdown Services
-        # ---------------------------------------------
 
         self.services.shutdown()
 
-        print(
-            "✅ APPLICATION SHUTDOWN FINISHED"
-        )
+        print("✅ APPLICATION SHUTDOWN FINISHED")
