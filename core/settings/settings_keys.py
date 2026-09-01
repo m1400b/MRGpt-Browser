@@ -60,6 +60,8 @@ class SettingsKeys:
 
     SAVE_HISTORY = "privacy/save_history"
 
+    ASK_SAVE_HISTORY = "privacy/ask_save_history"
+
     SAVE_PASSWORDS = "privacy/save_passwords"
 
     SEND_DO_NOT_TRACK = "privacy/do_not_track"
