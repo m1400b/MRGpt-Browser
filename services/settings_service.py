@@ -72,61 +72,31 @@ class SettingsService:
 
     @property
     def language(self) -> str:
-
-        return self.value(
-            SettingsKeys.LANGUAGE
-        )
+        return self.value(SettingsKeys.LANGUAGE)
 
     @language.setter
-    def language(
-        self,
-        value: str,
-    ) -> None:
-
-        self.set_value(
-            SettingsKeys.LANGUAGE,
-            value,
-        )
+    def language(self, value: str) -> None:
+        self.set_value(SettingsKeys.LANGUAGE, value)
 
     # -------------------------------------------------
 
     @property
     def theme(self) -> str:
-
-        return self.value(
-            SettingsKeys.THEME
-        )
+        return self.value(SettingsKeys.THEME)
 
     @theme.setter
-    def theme(
-        self,
-        value: str,
-    ) -> None:
-
-        self.set_value(
-            SettingsKeys.THEME,
-            value,
-        )
+    def theme(self, value: str) -> None:
+        self.set_value(SettingsKeys.THEME, value)
 
     # -------------------------------------------------
 
     @property
     def home_page(self) -> str:
-
-        return self.value(
-            SettingsKeys.HOME_PAGE
-        )
+        return self.value(SettingsKeys.HOME_PAGE)
 
     @home_page.setter
-    def home_page(
-        self,
-        value: str,
-    ) -> None:
-
-        self.set_value(
-            SettingsKeys.HOME_PAGE,
-            value,
-        )
+    def home_page(self, value: str) -> None:
+        self.set_value(SettingsKeys.HOME_PAGE, value)
 
     # =================================================
     # Startup
@@ -134,144 +104,63 @@ class SettingsService:
 
     @property
     def startup_mode(self) -> str:
-
-        return self.value(
-            SettingsKeys.STARTUP_MODE
-        )
+        return self.value(SettingsKeys.STARTUP_MODE)
 
     @startup_mode.setter
-    def startup_mode(
-        self,
-        value: str,
-    ) -> None:
-
-        self.set_value(
-            SettingsKeys.STARTUP_MODE,
-            value,
-        )
+    def startup_mode(self, value: str) -> None:
+        self.set_value(SettingsKeys.STARTUP_MODE, value)
 
     # -------------------------------------------------
 
     @property
     def restore_session(self) -> bool:
-
-        return bool(
-
-            self.value(
-
-                SettingsKeys.RESTORE_SESSION
-
-            )
-
-        )
+        return bool(self.value(SettingsKeys.RESTORE_SESSION))
 
     @restore_session.setter
-    def restore_session(
-        self,
-        value: bool,
-    ) -> None:
-
-        self.set_value(
-
-            SettingsKeys.RESTORE_SESSION,
-
-            value,
-
-        )
+    def restore_session(self, value: bool) -> None:
+        self.set_value(SettingsKeys.RESTORE_SESSION, value)
 
     # -------------------------------------------------
 
     @property
     def check_updates(self) -> bool:
-
-        return bool(
-
-            self.value(
-
-                SettingsKeys.CHECK_UPDATES
-
-            )
-
-        )
+        return bool(self.value(SettingsKeys.CHECK_UPDATES))
 
     @check_updates.setter
-    def check_updates(
-        self,
-        value: bool,
-    ) -> None:
+    def check_updates(self, value: bool) -> None:
+        self.set_value(SettingsKeys.CHECK_UPDATES, value)
 
-        self.set_value(
-
-            SettingsKeys.CHECK_UPDATES,
-
-            value,
-
-        )
-    
     # =================================================
     # Downloads
     # =================================================
 
     @property
     def download_path(self) -> str:
-
-        return self.value(
-            SettingsKeys.DOWNLOAD_PATH
-        )
+        return self.value(SettingsKeys.DOWNLOAD_PATH)
 
     @download_path.setter
-    def download_path(
-        self,
-        value: str,
-    ) -> None:
+    def download_path(self, value: str) -> None:
+        self.set_value(SettingsKeys.DOWNLOAD_PATH, value)
 
-        self.set_value(
-            SettingsKeys.DOWNLOAD_PATH,
-            value,
-        )
-        
+    # -------------------------------------------------
+
     @property
     def ask_download_location(self) -> bool:
-
-        return bool(
-            self.value(
-                SettingsKeys.ASK_DOWNLOAD_LOCATION
-            )
-        )
+        return bool(self.value(SettingsKeys.ASK_DOWNLOAD_LOCATION))
 
     @ask_download_location.setter
-    def ask_download_location(
-        self,
-        value: bool,
-    ) -> None:
-
-        self.set_value(
-            SettingsKeys.ASK_DOWNLOAD_LOCATION,
-            value,
-        )
-
+    def ask_download_location(self, value: bool) -> None:
+        self.set_value(SettingsKeys.ASK_DOWNLOAD_LOCATION, value)
 
     # -------------------------------------------------
 
     @property
     def open_after_download(self) -> bool:
-
-        return bool(
-            self.value(
-                SettingsKeys.OPEN_AFTER_DOWNLOAD
-            )
-        )
+        return bool(self.value(SettingsKeys.OPEN_AFTER_DOWNLOAD))
 
     @open_after_download.setter
-    def open_after_download(
-        self,
-        value: bool,
-    ) -> None:
-
-        self.set_value(
-            SettingsKeys.OPEN_AFTER_DOWNLOAD,
-            value,
-        )
+    def open_after_download(self, value: bool) -> None:
+        self.set_value(SettingsKeys.OPEN_AFTER_DOWNLOAD, value)
 
     # =================================================
     # Privacy
@@ -279,30 +168,33 @@ class SettingsService:
 
     @property
     def cookies_enabled(self) -> bool:
-
-        return bool(
-
-            self.value(
-
-                SettingsKeys.ACCEPT_COOKIES
-
-            )
-
-        )
+        return bool(self.value(SettingsKeys.ACCEPT_COOKIES))
 
     @cookies_enabled.setter
-    def cookies_enabled(
-        self,
-        value: bool,
-    ) -> None:
+    def cookies_enabled(self, value: bool) -> None:
+        self.set_value(SettingsKeys.ACCEPT_COOKIES, value)
 
-        self.set_value(
+    # -------------------------------------------------
 
-            SettingsKeys.ACCEPT_COOKIES,
+    @property
+    def save_history(self) -> bool:
+        """Whether browsing history should be persisted."""
+        return bool(self.value(SettingsKeys.SAVE_HISTORY))
 
-            value,
+    @save_history.setter
+    def save_history(self, value: bool) -> None:
+        self.set_value(SettingsKeys.SAVE_HISTORY, bool(value))
 
-        )
+    # -------------------------------------------------
+
+    @property
+    def ask_save_history(self) -> bool:
+        """Whether the startup history consent dialog should be shown."""
+        return bool(self.value(SettingsKeys.ASK_SAVE_HISTORY))
+
+    @ask_save_history.setter
+    def ask_save_history(self, value: bool) -> None:
+        self.set_value(SettingsKeys.ASK_SAVE_HISTORY, bool(value))
 
     # =================================================
     # Appearance
@@ -310,38 +202,15 @@ class SettingsService:
 
     @property
     def zoom_factor(self) -> float:
-
-        return float(
-
-            self.value(
-
-                SettingsKeys.ZOOM_FACTOR
-
-            )
-
-        )
+        return float(self.value(SettingsKeys.ZOOM_FACTOR))
 
     @zoom_factor.setter
-    def zoom_factor(
-        self,
-        value: float,
-    ) -> None:
-
-        self.set_value(
-
-            SettingsKeys.ZOOM_FACTOR,
-
-            value,
-
-        )
+    def zoom_factor(self, value: float) -> None:
+        self.set_value(SettingsKeys.ZOOM_FACTOR, value)
 
     # =================================================
 
     @property
     def settings(self) -> Settings:
-
-        """
-        دسترسی مستقیم در صورت نیاز.
-        """
-
+        """دسترسی مستقیم در صورت نیاز."""
         return self._settings
