@@ -13,7 +13,7 @@ from database.sqlite.sqlite_repository import SQLiteRepository
 from models.history_item import HistoryItem
 
 
-class HistoryRepository(SQLiteRepository[HistoryItem]):
+class HistoryRepository(SQLiteRepository):
 
     """
     History Repository
@@ -25,71 +25,83 @@ class HistoryRepository(SQLiteRepository[HistoryItem]):
     def table(self):
 
         return "history"
+    
+    # -------------------------------------------------
+    @staticmethod
+    def _to_datetime(value) -> datetime:
+
+        if isinstance(value, datetime):
+            return value
+
+        if isinstance(value, str) and value:
+
+            return datetime.fromisoformat(value)
+
+        return datetime.now()
+
+
+    @staticmethod
+    def _to_iso(value) -> str:
+
+        if isinstance(value, datetime):
+            return value.isoformat()
+
+        if isinstance(value, str):
+            return value
+
+        return datetime.now().isoformat()
 
     # -------------------------------------------------
 
     def to_record(
-        self,
-        item: HistoryItem
-    ) -> dict:
+    self,
+    item: HistoryItem,
+) -> dict:
 
         return {
-
             "title": item.title,
-
             "url": item.url,
-
-            "visit_time": item.visit_time,
-
+            "visit_time": self._to_iso(item.visit_time),
             "visit_count": item.visit_count,
-
             "favicon": item.favicon,
-
-            "created_at": item.created_at,
-
-            "updated_at": item.updated_at,
-
+            "created_at": self._to_iso(item.created_at),
+            "updated_at": self._to_iso(item.updated_at),
         }
-
     # -------------------------------------------------
 
     def from_record(
-        self,
-        row
-    ) -> HistoryItem:
+    self,
+    row,
+) -> HistoryItem:
 
-        item = HistoryItem()
-
-        item.id = row["id"]
-
-        item.title = row["title"]
-
-        item.url = row["url"]
-
-        item.visit_time = row["visit_time"]
-
-        item.visit_count = row["visit_count"]
-
-        item.favicon = row["favicon"]
-
-        item.created_at = row["created_at"]
-
-        item.updated_at = row["updated_at"]
-
-        return item
-
+        return HistoryItem(
+            id=row["id"],
+            title=row["title"] or "",
+            url=row["url"] or "",
+            visit_time=self._to_datetime(
+                row["visit_time"]
+            ),
+            visit_count=row["visit_count"] or 1,
+            favicon=row["favicon"] or "",
+            created_at=self._to_datetime(
+                row["created_at"]
+            ),
+            updated_at=self._to_datetime(
+                row["updated_at"]
+            ),
+        )
     # -------------------------------------------------
 
     def add(
-        self,
-        item: HistoryItem
-    ) -> int:
+    self,
+    item: HistoryItem,
+) -> int:
+
+        record = self.to_record(item)
 
         cursor = self.execute(
-
             f"""
             INSERT INTO {self.table}
-
             (
                 title,
                 url,
@@ -99,86 +111,53 @@ class HistoryRepository(SQLiteRepository[HistoryItem]):
                 created_at,
                 updated_at
             )
-
-            VALUES
-            (
-                ?,?,?,?,?,?,?
-            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
-
             (
-
-                item.title,
-
-                item.url,
-
-                item.visit_time,
-
-                item.visit_count,
-
-                item.favicon,
-
-                item.created_at,
-
-                item.updated_at,
-
-            )
-
+                record["title"],
+                record["url"],
+                record["visit_time"],
+                record["visit_count"],
+                record["favicon"],
+                record["created_at"],
+                record["updated_at"],
+            ),
         )
 
         return cursor.lastrowid
-
     # -------------------------------------------------
 
     def update(
-        self,
-        item: HistoryItem
-    ) -> bool:
+    self,
+    item: HistoryItem,
+) -> bool:
 
+        record = self.to_record(item)
+    
         self.execute(
-
             f"""
             UPDATE {self.table}
-
             SET
-
                 title=?,
-
                 url=?,
-
                 visit_time=?,
-
                 visit_count=?,
-
                 favicon=?,
-
                 updated_at=?
-
             WHERE id=?
             """,
-
             (
-
-                item.title,
-
-                item.url,
-
-                item.visit_time,
-
-                item.visit_count,
-
-                item.favicon,
-
-                datetime.now().isoformat(),
-
+                record["title"],
+                record["url"],
+                record["visit_time"],
+                record["visit_count"],
+                record["favicon"],
+                record["updated_at"],
                 item.id,
-
-            )
-
+            ),
         )
-
+    
         return True
-
     # -------------------------------------------------
 
     def find_by_url(

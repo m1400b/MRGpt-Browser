@@ -15,7 +15,7 @@ from models.base_model import BaseModel
 @dataclass(slots=True)
 class HistoryItem(BaseModel):
     """
-    Browser History Record
+    Browser History Record.
     """
 
     id: int = 0
@@ -32,13 +32,18 @@ class HistoryItem(BaseModel):
 
     visit_count: int = 1
 
+    created_at: datetime = field(
+        default_factory=datetime.now
+    )
+
+    updated_at: datetime = field(
+        default_factory=datetime.now
+    )
+
     # -------------------------------------------------
 
     @property
     def domain(self) -> str:
-        """
-        Website domain.
-        """
 
         if "://" not in self.url:
             return self.url
@@ -47,7 +52,7 @@ class HistoryItem(BaseModel):
 
     # -------------------------------------------------
 
-    def increase_visit(self):
+    def increase_visit(self) -> None:
 
         self.visit_count += 1
 
@@ -60,6 +65,6 @@ class HistoryItem(BaseModel):
 
     # -------------------------------------------------
 
-    def __str__(self):
+    def __str__(self) -> str:
 
         return f"{self.title} ({self.url})"

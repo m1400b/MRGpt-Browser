@@ -213,6 +213,16 @@ class Application:
         )
 
         result = dialog.exec()
+        
+        print(
+        "🔍 HISTORY DIALOG RESULT:",
+        result,
+        "| ACCEPTED:",
+        HistoryConsentDialog.Accepted,
+        "| SELECTED SAVE HISTORY:",
+        repr(dialog.save_history),
+        "| REMEMBER CHOICE:",
+        dialog.remember_choice,)
 
         # Closing the dialog without choosing a button leaves the
         # persisted preference unchanged and asks again next time.

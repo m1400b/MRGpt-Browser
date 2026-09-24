@@ -65,6 +65,36 @@ class SettingsService:
     def sync(self) -> None:
 
         self._settings.sync()
+        
+    def bool_value(
+    self,
+    key: str,
+    default: bool = False,
+) -> bool:
+        """
+        Read a boolean setting safely.
+
+        Handles bool, int and string values returned
+        by QSettings.
+        """
+
+        value = self.value(key, default)
+
+        if isinstance(value, bool):
+            return value
+
+        if isinstance(value, str):
+            return value.strip().lower() in {
+                "true",
+                "1",
+                "yes",
+                "on",
+            }
+
+        if value is None:
+            return default
+
+        return bool(value)
 
     # =================================================
     # General
@@ -178,23 +208,33 @@ class SettingsService:
 
     @property
     def save_history(self) -> bool:
-        """Whether browsing history should be persisted."""
-        return bool(self.value(SettingsKeys.SAVE_HISTORY))
+        return self.bool_value(
+            SettingsKeys.SAVE_HISTORY,
+            default=True,
+        )
 
     @save_history.setter
     def save_history(self, value: bool) -> None:
-        self.set_value(SettingsKeys.SAVE_HISTORY, bool(value))
+        self.set_value(
+            SettingsKeys.SAVE_HISTORY,
+            bool(value),
+        )
 
     # -------------------------------------------------
 
     @property
     def ask_save_history(self) -> bool:
-        """Whether the startup history consent dialog should be shown."""
-        return bool(self.value(SettingsKeys.ASK_SAVE_HISTORY))
-
+        return self.bool_value(
+            SettingsKeys.ASK_SAVE_HISTORY,
+            default=True,
+        )
+    
     @ask_save_history.setter
     def ask_save_history(self, value: bool) -> None:
-        self.set_value(SettingsKeys.ASK_SAVE_HISTORY, bool(value))
+        self.set_value(
+            SettingsKeys.ASK_SAVE_HISTORY,
+            bool(value),
+        )
 
     # =================================================
     # Appearance

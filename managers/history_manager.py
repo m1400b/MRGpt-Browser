@@ -36,89 +36,77 @@ class HistoryManager:
     # -------------------------------------------------
 
     def add_visit(
-
-        self,
-
-        title: str,
-
-        url: str,
-
-        favicon: str = "",
-
-    ) -> HistoryItem:
+    self,
+    title: str,
+    url: str,
+    favicon: str = "",
+) -> HistoryItem:
 
         """
         Add browser visit.
         """
-
+    
         item = self.repository.find_by_url(url)
-
-        now = datetime.now().isoformat()
-
+    
+        now = datetime.now()
+    
         # -----------------------------------------
-
+        # New visit
+        # -----------------------------------------
+    
         if item is None:
-
+        
             item = HistoryItem(
-
                 title=title,
-
                 url=url,
-
                 favicon=favicon,
-
                 visit_time=now,
-
                 visit_count=1,
-
                 created_at=now,
-
                 updated_at=now,
-
             )
-
+    
             item.id = self.repository.add(item)
-
+    
             return item
-
+    
         # -----------------------------------------
         # Duplicate protection
         # -----------------------------------------
-
-        try:
-
-            last = datetime.fromisoformat(
-
-                item.visit_time
-
-            )
-
-            if datetime.now() - last < timedelta(
-
-                seconds=30
-
-            ):
-
+    
+        last = item.visit_time
+    
+        if isinstance(last, str):
+        
+            try:
+                last = datetime.fromisoformat(last)
+    
+            except ValueError:
+                last = None
+    
+        if isinstance(last, datetime):
+        
+            if now - last < timedelta(seconds=30):
+            
                 return item
-
-        except Exception:
-
-            pass
-
+    
+        # -----------------------------------------
+        # Update existing visit
+        # -----------------------------------------
+    
         item.title = title
-
+    
         item.favicon = favicon
-
+    
         item.visit_time = now
-
+    
         item.visit_count += 1
-
+    
         item.updated_at = now
-
+    
         self.repository.update(item)
-
+    
         return item
-
     # -------------------------------------------------
 
     def remove(

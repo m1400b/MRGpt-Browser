@@ -82,6 +82,10 @@ class Browser(QWidget):
         self.download_manager = services.resolve(
             ServiceNames.DOWNLOADS
         )
+        
+        self.history_service = services.resolve(
+            ServiceNames.HISTORY
+        )
 
         # ---------------------------------------------
         # Current connected tab
@@ -171,6 +175,11 @@ class Browser(QWidget):
 
         self.browser_service.url_changed.connect(
             self.url_changed.emit
+        )
+        
+        # ثبت تاریخچه پس از پایان بارگذاری موفق صفحه
+        self.load_finished.connect(
+            self._record_history
         )
 
         # ---------------------------------------------
@@ -510,6 +519,26 @@ class Browser(QWidget):
         self.download_manager.handle_download(
             request
         )
+        
+    # =================================================
+    # History
+    # =================================================
+    
+    def _record_history(self, ok: bool) -> None:
+    
+        if not ok:
+            return
+    
+        tab = self.current_tab
+    
+        if tab is None:
+            return
+    
+        self.history_service.record_navigation(
+            tab.url,
+            tab.title,
+        )
+        
     # =================================================
     # Shutdown
     # =================================================
