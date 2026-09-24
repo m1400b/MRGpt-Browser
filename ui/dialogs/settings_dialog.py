@@ -18,7 +18,8 @@ from services.appearance_service import AppearanceService
 
 from ui.pages.settings.general_page import GeneralPage
 from ui.pages.settings.appearance_page import AppearancePage
-
+from services.history_service import HistoryService
+from ui.pages.settings.history_page import HistoryPage
 
 class SettingsDialog(QDialog):
     """
@@ -28,17 +29,19 @@ class SettingsDialog(QDialog):
     # -------------------------------------------------
 
     def __init__(
-        self,
-        settings: SettingsService,
-        appearance_service: AppearanceService,
-        parent=None,
-    ) -> None:
+    self,
+    settings: SettingsService,
+    appearance_service: AppearanceService,
+    history_service: HistoryService,
+    parent=None,
+) -> None:
 
         super().__init__(parent)
 
         self.settings = settings
 
         self.appearance_service = appearance_service
+        self.history_service = history_service
 
         self.setWindowTitle(
             "Settings"
@@ -77,6 +80,10 @@ class SettingsDialog(QDialog):
         self.downloads_page = DownloadsPage(
     self.settings
 )
+        self.history_page = HistoryPage(
+    self.settings,
+    self.history_service,
+)
 
         self.buttons = QDialogButtonBox(
             QDialogButtonBox.Ok
@@ -105,6 +112,10 @@ class SettingsDialog(QDialog):
         self.pages.addTab(
     self.downloads_page,
     "Downloads",
+)
+        self.pages.addTab(
+    self.history_page,
+    "History",
 )
 
         layout.addWidget(

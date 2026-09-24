@@ -81,6 +81,9 @@ class MainWindow(QMainWindow):
         self.download_manager = services.resolve(
     ServiceNames.DOWNLOADS
 )
+        self.history_service = self.services.resolve(
+    ServiceNames.HISTORY
+)
 
         # ---------------------------------------------
         # Shutdown state
@@ -410,10 +413,13 @@ class MainWindow(QMainWindow):
         """
 
         dialog = SettingsDialog(
-            self.settings_service,
-            self.appearance_service,
-            self,
-        )
+    self.settings_service,
+    self.appearance_service,
+    self.history_service,
+    self,
+)
+
+
 
         dialog.exec()
 
