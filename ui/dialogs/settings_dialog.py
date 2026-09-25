@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (
 from ui.pages.settings.downloads_page import DownloadsPage
 from services.settings_service import SettingsService
 from services.appearance_service import AppearanceService
-
+from PySide6.QtCore import Signal
 from ui.pages.settings.general_page import GeneralPage
 from ui.pages.settings.appearance_page import AppearancePage
 from services.history_service import HistoryService
@@ -25,7 +25,7 @@ class SettingsDialog(QDialog):
     """
     Application settings dialog.
     """
-
+    open_url_requested = Signal(str)
     # -------------------------------------------------
 
     def __init__(
@@ -147,6 +147,10 @@ class SettingsDialog(QDialog):
             apply_button.clicked.connect(
                 self._on_apply
             )
+        
+        self.history_page.open_url_requested.connect(
+    self.open_url_requested.emit
+)
 
     # =================================================
     # Pages

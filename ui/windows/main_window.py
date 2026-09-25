@@ -31,6 +31,10 @@ from ui.dialogs.settings_dialog import SettingsDialog
 from ui.widgets.browser.browser_toolbar import BrowserToolbar
 from ui.widgets.browser.page_loading_bar import LoadingBar
 from ui.dialogs.download_exit_dialog import DownloadExitDialog
+from PySide6.QtGui import QShortcut, QKeySequence
+
+from ui.dialogs.history_dialog import HistoryDialog
+
 
 class MainWindow(QMainWindow):
     """
@@ -132,6 +136,42 @@ class MainWindow(QMainWindow):
             QUrl(
                 self.settings_service.home_page
             )
+        )
+    
+        self.history_shortcut = QShortcut(
+        QKeySequence("Ctrl+H"),
+        self,
+    )
+
+        self.history_shortcut.activated.connect(
+        self._show_history
+    )
+    
+    #==================================================
+    def _show_history(self) -> None:
+
+        dialog = HistoryDialog(
+            self.history_service,
+            self,
+        )
+    
+        dialog.open_url_requested.connect(
+            self._open_history_url
+        )
+    
+        dialog.exec()
+    
+    #==================================================
+    
+    def _open_history_url(self, url: str) -> None:
+
+        url = url.strip()
+
+        if not url:
+            return
+
+        self.browser.new_tab(
+            QUrl(url)
         )
 
     # =================================================
@@ -419,7 +459,9 @@ class MainWindow(QMainWindow):
     self,
 )
 
-
+        dialog.open_url_requested.connect(
+    self._open_history_url
+)
 
         dialog.exec()
 

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from PySide6.QtCore import Qt
+
 from PySide6.QtWidgets import (
     QDialog,
     QVBoxLayout,
@@ -24,13 +24,14 @@ from PySide6.QtWidgets import (
 )
 
 from services.history_service import HistoryService
-
+from PySide6.QtCore import Qt, Signal
 
 class HistoryDialog(QDialog):
     """
     Display, search and manage browsing history.
     """
-
+    open_url_requested = Signal(str)
+    
     def __init__(
         self,
         history_service: HistoryService,
@@ -114,6 +115,12 @@ class HistoryDialog(QDialog):
             False
         )
 
+        self.open_button = QPushButton(
+    "باز کردن در تب جدید"
+)
+
+        self.open_button.setEnabled(False)
+        
         self.close_button = QPushButton(
             "بستن"
         )
@@ -251,6 +258,10 @@ class HistoryDialog(QDialog):
         )
 
         footer_layout.addStretch()
+        
+        footer_layout.addWidget(
+    self.open_button
+)
 
         footer_layout.addWidget(
             self.delete_button
@@ -282,6 +293,14 @@ class HistoryDialog(QDialog):
             self._update_buttons
         )
 
+        self.open_button.clicked.connect(
+    self._open_selected
+)
+
+        self.table.itemDoubleClicked.connect(
+    self._open_selected
+)
+        
         self.delete_button.clicked.connect(
             self._delete_selected
         )
@@ -494,8 +513,16 @@ class HistoryDialog(QDialog):
 
     def _update_buttons(self) -> None:
 
-        self.delete_button.setEnabled(
+        has_selection = (
             self._selected_history_id() is not None
+        )
+
+        self.delete_button.setEnabled(
+            has_selection
+        )
+
+        self.open_button.setEnabled(
+            has_selection
         )
 
     # =================================================
@@ -539,3 +566,33 @@ class HistoryDialog(QDialog):
             return
 
         self.refresh()
+    
+    def _selected_url(self) -> str | None:
+
+        row = self.table.currentRow()
+
+        if row < 0:
+            return None
+
+        item = self.table.item(
+            row,
+            1,
+        )
+
+        if item is None:
+            return None
+
+        url = item.text().strip()
+
+        return url or None
+    
+    def _open_selected(self, *args) -> None:
+
+        url = self._selected_url()
+    
+        if not url:
+            return
+    
+        self.open_url_requested.emit(
+            url
+        )

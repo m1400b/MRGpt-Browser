@@ -6,7 +6,7 @@ History Settings Page
 
 from __future__ import annotations
 
-from PySide6.QtCore import Qt
+
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -21,12 +21,14 @@ from PySide6.QtWidgets import (
 from services.settings_service import SettingsService
 from services.history_service import HistoryService
 from ui.dialogs.history_dialog import HistoryDialog
+from PySide6.QtCore import Qt, Signal
 
 class HistoryPage(QWidget):
     """
     History settings and management.
     """
-
+    open_url_requested = Signal(str)
+    
     def __init__(
         self,
         settings: SettingsService,
@@ -239,16 +241,17 @@ class HistoryPage(QWidget):
     # =================================================
     # View History
     # =================================================
-    
     def _show_history(self) -> None:
-    
+
         dialog = HistoryDialog(
             self.history_service,
             self,
         )
     
+        dialog.open_url_requested.connect(
+            self.open_url_requested.emit
+        )
+    
         dialog.exec()
     
-        # Refresh the saved history count after
-        # the history dialog has been closed.
         self._refresh_history_count()
